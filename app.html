@@ -1,0 +1,38 @@
+<html>
+    <meta charset="utf-8" />
+    <head>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/appjs.js"></script>
+        <script>
+        window.addEventListener('load', function() {
+            
+            var socket = io();
+            socket.on('message', function(data) {
+                var t = document.getElementById('time');
+                t.innerHTML = data;
+            });
+
+            socket.on('chat message', function(data) {
+                var msg = document.getElementById('messages');
+                msg.innerHTML += data + "<br/>";
+            });
+
+            var btsend = document.getElementById('btsend');
+            btsend.addEventListener('click', function() {
+                var txtmessage = document.getElementById('txtmessage');
+                socket.emit('chat message', txtmessage.value);
+            });
+        
+        });
+        </script>
+    </head>
+    <body>
+    Aktualny czas na serwerze <b><span id="time"></span></b>.
+    
+    <div>
+        <input type='text' id='txtmessage' />
+        <button id='btsend'>Wyślij</button>
+        <div id='messages'></div>
+    </div>
+    </body>
+</html>
