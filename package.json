@@ -1,0 +1,15 @@
+{
+  "name": "herokuScripts",
+  "version": "1.0.0",
+  "description": "herokuScripts",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "author": "raita",
+  "license": "ISC",
+  "dependencies": {
+    "heroku": "^0.2.0"
+  }
+}
