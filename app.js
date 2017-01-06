@@ -1,25 +1,25 @@
 var http = require('http');
 var socket = require('socket.io');
-var fs = require('fs');
 var express = require('express');
 
-var html = fs.readFileSync('app.html', 'utf-8');
 
 var app = express();
 var server = http.createServer(app);
 var io = socket(server);
 
 app.use( express.static('./static'));
+app.set('view engine', 'ejs');
+app.set('views', './views');
 
 app.get('/', function(req, res) {
-    res.setHeader('Content-type', 'text/html');
-    res.write(html);
+    //w renderze wyslij mi username
+    res.render('hexagon')
     res.end();
 });
 
 server.listen( process.env.PORT || 3000 );
 
-
+/*
 io.on('connection', function(socket) {
     console.log('client connected:' + socket.id);
     socket.on('chat message', function(data) {
@@ -32,5 +32,5 @@ setInterval( function() {
     var date = new Date().toString();
     io.emit( 'message', date.toString() );
 }, 1000 );
-
+*/
 console.log( 'server listens' );

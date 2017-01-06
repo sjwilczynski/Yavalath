@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <! -- username powinien przyjsc z serwera i jakby co trzeba go przeslac --!>
+    <script src="hex.js"></script>
+
+    <canvas id="HexCanvas" width="800" height="640"></canvas>
+  
+    <script>
+        var hexagonGrid = new HexagonGrid("HexCanvas", 38);
+        hexagonGrid.drawHexGrid(true);
+    </script>
+    
+</body>
+</html>
+
