@@ -25,12 +25,7 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 
 app.get('/', function(req, res) {
-    //w renderze wyslij mi username
-    //if(socket.id in loginDict)
-    res.render('hexagon', {username : 'user'});
-    //else
-    //    res.render('login.ejs')
-    res.end();
+    res.redirect('login');
 });
 
 app.get('/login', (req,res) =>{
@@ -47,8 +42,8 @@ app.post('/login',(req,res)=>{
     if(username != ''){ // TODO baza danych
         loginDict.push({key:toLogin, value:username})
         console.log(loginDict);
-        console.log('tutaj się pierdoli\n');
-        res.render('hexagon');//, { foo: username});
+        console.log('już się nie pierdoli\n');
+        res.render('hexagon',{ username : username });
     } 
     else{
         res.render('login')
@@ -67,7 +62,6 @@ io.on('connection', function(socket) {
     {
         toLogin = socket.id;
         console.log(socket.id in loginDict);
-        socket.emit('redirect', 'login');
     }
     //socket.on('chat message', function(data) {
     //    io.emit('chat message', data); // do wszystkich

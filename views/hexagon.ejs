@@ -10,24 +10,16 @@
             
         var socket = io();
         socket.on('message', function(data) {
-            var t = document.getElementById('time');
-            t.innerHTML = data;
+            
         });
 
-        socket.on('redirect', function(destination) {
-            window.location.href = destination;
-        });
-
-        var btsend = document.getElementById('btsend');
-        btsend.addEventListener('click', function() {
-            var txtmessage = document.getElementById('txtmessage');
-            socket.emit('chat message', txtmessage.value);
-        });
         
     });
     </script>
 </head>
 <body>
+
+    Username to <%= username %>
     <! -- username powinien przyjsc z serwera i jakby co trzeba go przeslac --!>
     <script src="hex.js"></script>
 
