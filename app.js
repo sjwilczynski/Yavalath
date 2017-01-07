@@ -63,6 +63,10 @@ io.on('connection', function(socket) {
         toLogin = socket.id;
         console.log(socket.id in loginDict);
     }
+    socket.on('move',function(data){
+        console.log(data.username);
+        console.log(data.hex.x, data.hex.y);
+    })
     //socket.on('chat message', function(data) {
     //    io.emit('chat message', data); // do wszystkich
         //socket.emit('chat message', data); tylko do połączonego
