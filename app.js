@@ -65,7 +65,7 @@ io.on('connection', function(socket) {
     }
     socket.on('move',function(data){
         console.log(data.username);
-        console.log(data.hex.x, data.hex.y);
+        console.log(data.hex.coordinates.x, data.hex.coordinates.y);
         //tutaj sprawdzasz stan gry i odsylasz mi odpowiedz
         //costam costam
         //socket.emit('response', {isValid : isValid, hex: data.hex, color : color})
