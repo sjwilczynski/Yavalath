@@ -1,6 +1,26 @@
 // login.ejs
 <html>
     <body>
+        <script>/*
+            window.addEventListener('load', function() {
+                
+                var socket = io();
+                socket.on('message', function(data) {
+                    var t = document.getElementById('time');
+                    t.innerHTML = data;
+                });
+
+                socket.on('redirect', function(destination) {
+                    window.location.href = destination;
+                });
+
+                var btsend = document.getElementById('btsend');
+                btsend.addEventListener('click', function() {
+                    var txtmessage = document.getElementById('txtmessage');
+                    socket.emit('chat message', txtmessage.value);
+                });
+            });*/
+        </script>
         <form method="POST">
         <div>
             Login: <input type='text' name='username' />

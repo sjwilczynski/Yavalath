@@ -2,37 +2,56 @@ var http = require('http');
 var socket = require('socket.io');
 var express = require('express');
 
-
 var app = express();
 var server = http.createServer(app);
 var io = socket(server);
+var bodyParser = require('body-parser');
+		
 
+
+/*function User(ID, login, color) {
+    this.ID = ID;
+    this.login = login;
+    this.color = color;
+}*/
+//User.prototype.newParam = "param";
+	
 var loginDict = []; // socket.id - key | login - value
 var toLogin;
 
+app.use( bodyParser.urlencoded({extended:true}) ) ;
 app.use( express.static('./static'));
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
 app.get('/', function(req, res) {
     //w renderze wyslij mi username
-    res.render('hexagon')
+    //if(socket.id in loginDict)
+    res.render('hexagon', {username : 'user'});
+    //else
+    //    res.render('login.ejs')
     res.end();
 });
 
 app.get('/login', (req,res) =>{
-    res.render('login.ejs')
+    //res.toLogin = req.toLogin;
+    console.log('logging in\n');
+    res.render('login')
 })
 app.post('/login',(req,res)=>{
-    var username = req.body.txtLogin
-    var passwd = req.body.txtPassword
+    //console.log(req.body.username);
+    var username = req.body.username
+    var passwd = req.body.pwd
+    console.log(username, passwd, toLogin);
     
     if(username != ''){ // TODO baza danych
-        loginDict.push({toLogin : username})
-        res.redirect('/')
+        loginDict.push({key:toLogin, value:username})
+        console.log(loginDict);
+        console.log('tutaj się pierdoli\n');
+        res.render('hexagon');//, { foo: username});
     } 
     else{
-        res.render('login.ejs')
+        res.render('login')
     }
 })
 
@@ -42,6 +61,25 @@ server.listen( process.env.PORT || 3000 );
 
 io.on('connection', function(socket) {
     console.log('client connected:' + socket.id);
+    console.log(socket.id in loginDict);
+    if(socket.id in loginDict){}
+    else
+    {
+        toLogin = socket.id;
+        console.log(socket.id in loginDict);
+        socket.emit('redirect', 'login');
+    }
+    //socket.on('chat message', function(data) {
+    //    io.emit('chat message', data); // do wszystkich
+        //socket.emit('chat message', data); tylko do połączonego
+    //})
+});
+
+/*io.on('connection', function(socket) {
+    socket.on('join', function(data){
+        console.log(data);
+    });
+    console.log('client connected:' + socket.id);
     if(socket.id in loginDict){}
     //socket.on('chat message', function(data) {
       //  io.emit('chat message', data); // do wszystkich
@@ -49,10 +87,12 @@ io.on('connection', function(socket) {
     //})
     else
     {
+        console.log(socket.id);
         toLogin = socket.id;
+        //res.toLogin = socket.id;
         res.redirect('/login')
     }
-});
+});*/
 
 setInterval( function() {
     var date = new Date().toString();

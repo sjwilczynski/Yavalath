@@ -3,6 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/appjs.js"></script>
+    <script>
+    window.addEventListener('load', function() {
+            
+        var socket = io();
+        socket.on('message', function(data) {
+            var t = document.getElementById('time');
+            t.innerHTML = data;
+        });
+
+        socket.on('redirect', function(destination) {
+            window.location.href = destination;
+        });
+
+        var btsend = document.getElementById('btsend');
+        btsend.addEventListener('click', function() {
+            var txtmessage = document.getElementById('txtmessage');
+            socket.emit('chat message', txtmessage.value);
+        });
+        
+    });
+    </script>
 </head>
 <body>
     <! -- username powinien przyjsc z serwera i jakby co trzeba go przeslac --!>
