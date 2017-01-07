@@ -66,6 +66,9 @@ io.on('connection', function(socket) {
     socket.on('move',function(data){
         console.log(data.username);
         console.log(data.hex.x, data.hex.y);
+        //tutaj sprawdzasz stan gry i odsylasz mi odpowiedz
+        //costam costam
+        //socket.emit('response', {isValid : isValid, hex: data.hex, color : color, isEndGame : isEndGame})
     })
     //socket.on('chat message', function(data) {
     //    io.emit('chat message', data); // do wszystkich
@@ -91,10 +94,5 @@ io.on('connection', function(socket) {
         res.redirect('/login')
     }
 });*/
-
-setInterval( function() {
-    var date = new Date().toString();
-    io.emit( 'message', date.toString() );
-}, 1000 );
 
 console.log( 'server listens' );
