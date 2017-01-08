@@ -15,9 +15,29 @@ var bodyParser = require('body-parser');
     this.color = color;
 }*/
 //User.prototype.newParam = "param";
-	
+
+function hsh(x, y)
+{
+    return x + 9 * y;
+}
+
 var loginDict = []; // socket.id - key | login - value
 var toLogin;
+
+var N = 80; // coord = x + 9 * y 
+var gamestate = {
+    board : Array.apply(0, {length: N}).map(_ => 0, Number),
+    whoseTurn : 0,
+    user0 : undefined,
+    user1 : undefined,
+    user0col : "blue",//(0, 0, 255),
+    user1col : "red",//(255, 0, 0)
+};
+
+function verify()
+{
+    return -1;
+}
 
 app.use( bodyParser.urlencoded({extended:true}) ) ;
 app.use( express.static('./static'));
@@ -66,6 +86,29 @@ io.on('connection', function(socket) {
     socket.on('move',function(data){
         console.log(data.username);
         console.log(data.hex.coordinates.x, data.hex.coordinates.y);
+        var x = data.hex.coordinates.x; 
+        var y = data.hex.coordinates.y;
+        var username = data.username;
+        var userNo;
+        if(username == gamestate.user1)
+            userNo = 1;
+        else if(username == gamestate.user0)
+            userNo = 0;
+        //else nie masz prawa wykonywać ruchów bo nie grasz (spectator mode???)
+        if(gamestate.board[hsh(x,y)] == 0)
+        {
+            gamestate.board[hsh(x,y)] = userNo;
+            var isEnded = verify(); // -1 gramy dalej | 0 - user0 win | 1 - u1 w
+            if(isEnded == -1)
+                socket.emit('response', {isValid : true, hex: data.hex, color : gamestate["user" + toString(userNo) + "col"]})
+            if(isEnded == 0)
+                socket.emit('endGame', {winner : gamestate.user0, looser : gamestate.user1})
+            if(isEnded == 1)
+                socket.emit('endGame', {winner : gamestate.user1, looser : gamestate.user0})
+            // przypadek kiedy wypełni się całą planszę a nikt nie wygrał
+        }
+        else
+            socket.emit('response', {isValid : false});
         //tutaj sprawdzasz stan gry i odsylasz mi odpowiedz
         //costam costam
         //socket.emit('response', {isValid : isValid, hex: data.hex, color : color}) na razie dla testow:
