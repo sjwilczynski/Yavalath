@@ -9,11 +9,11 @@ var bodyParser = require('body-parser');
 		
 
 
-/*function User(ID, login, color) {
+function User(ID, login, color) {
     this.ID = ID;
     this.login = login;
     this.color = color;
-}*/
+}
 //User.prototype.newParam = "param";
 
 function hsh(x, y)
@@ -32,9 +32,9 @@ var gamestate = {
     board : Array.apply(0, {length: N}).map(_ => -1, Number),
     whoseTurn : 0,
     user0 : undefined,
-    user1 : undefined,
-    user0col : "blue",//(0, 0, 255),
-    user1col : "red"//(255, 0, 0)
+    user1 : undefined//,
+    //user0col : "blue",//(0, 0, 255),
+    //user1col : "red"//(255, 0, 0)
 };
 
 function verify()
@@ -66,6 +66,11 @@ app.post('/login',(req,res)=>{
         loginDict.push({key:toLogin, value:username})
         console.log(loginDict);
         console.log('już się nie pierdoli\n');
+        if(gamestate.user0 == undefined)
+            gamestate.user0 = User(toLogin, username, "blue");
+        else if(gamestate.user1 == undefined)
+            gamestate.user1 = User(toLogin, username, "red");
+        // else wypierdalaj
         res.render('hexagon',{ username : username });
     } 
     else{
@@ -111,9 +116,9 @@ io.on('connection', function(socket) {
             if(isEnded == -1)
                 socket.emit('response', {isValid : true, hex: data.hex, color : gamestate["user" + toString(userNo) + "col"]});//"blue"});//
             if(isEnded == 0)
-                socket.emit('endGame', {winner : gamestate.user0, looser : gamestate.user1});
+                socket.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
             if(isEnded == 1)
-                socket.emit('endGame', {winner : gamestate.user1, looser : gamestate.user0});
+                socket.emit('endGame', {winner : gamestate.user1.login, looser : gamestate.user0.login});
             // przypadek kiedy wypełni się całą planszę a nikt nie wygrał
         }
         else{
@@ -130,24 +135,5 @@ io.on('connection', function(socket) {
         //socket.emit('chat message', data); tylko do połączonego
     //})
 });
-
-/*io.on('connection', function(socket) {
-    socket.on('join', function(data){
-        console.log(data);
-    });
-    console.log('client connected:' + socket.id);
-    if(socket.id in loginDict){}
-    //socket.on('chat message', function(data) {
-      //  io.emit('chat message', data); // do wszystkich
-        ////socket.emit('chat message', data); tylko do połączonego
-    //})
-    else
-    {
-        console.log(socket.id);
-        toLogin = socket.id;
-        //res.toLogin = socket.id;
-        res.redirect('/login')
-    }
-});*/
 
 console.log( 'server listens' );
