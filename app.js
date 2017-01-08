@@ -110,14 +110,13 @@ io.on('connection', function(socket) {
         {
             gamestate.board[hsh(x,y)] = userNo;
             var isEnded = verify(); // -1 gramy dalej | 0 - user0 win | 1 - u1 w
-            //var currColor = 
             console.log(isEnded);
-            gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
+            //gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
             if(isEnded == -1)
             {
-                if(gamestate.whoseTurn == 1) // wcześniej zamieniliśmy już
+                if(gamestate.whoseTurn == 0) // wcześniej zamieniliśmy już
                     socket.emit('response', {isValid : true, hex: data.hex, color : gamestate.user0.color});//"blue"});//
-                if(gamestate.whoseTurn == 0)
+                if(gamestate.whoseTurn == 1)
                     socket.emit('response', {isValid : true, hex: data.hex, color : gamestate.user1.color});//"blue"});//
             }
             if(isEnded == 0)
