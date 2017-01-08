@@ -127,6 +127,7 @@ HexagonGrid.prototype.drawHex = function(coord, fillColor, debugText, isDebug) {
     }
     this.context.strokeStyle = "#000";
     var angle = Math.PI / 6;
+    this.context.beginPath(); //bez beginPath zamalowywal na niebiesko takze ostatni narysowany - glupie
     this.context.moveTo (x0 +  this.radius * Math.cos(angle), y0 +  this.radius *  Math.sin(angle));       
  
     for (var i = 1; i <= 6; i++) {
