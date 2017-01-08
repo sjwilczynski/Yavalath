@@ -68,7 +68,8 @@ io.on('connection', function(socket) {
         console.log(data.hex.coordinates.x, data.hex.coordinates.y);
         //tutaj sprawdzasz stan gry i odsylasz mi odpowiedz
         //costam costam
-        //socket.emit('response', {isValid : isValid, hex: data.hex, color : color})
+        //socket.emit('response', {isValid : isValid, hex: data.hex, color : color}) na razie dla testow:
+        socket.emit('response', {isValid : true, hex: data.hex, color : "blue"})
         //ewentualnie jak koniec gry socket.emit('endGame', {winner : user1, looser : user2})
     })
     //socket.on('chat message', function(data) {

@@ -67,12 +67,11 @@ function generateGridCoordinates( v1 , v2, grid0X, grid0Y){
     }
     return grids;
 }
-function HexagonGrid(canvasId, username, radius) {
+function HexagonGrid(canvasId, username, socket, radius) {
     
-//w tej klasie chyba tyle wystarczy
     this.radius = radius;
     this.username = username;
-    this.socket = io();
+    this.socket = socket;
 
     this.height = Math.sqrt(3) * radius;
     this.width = 2 * radius;
@@ -116,6 +115,7 @@ HexagonGrid.prototype.drawHex = function(coord, fillColor, debugText, isDebug) {
 
     var x0 = coord.pixels.x;
     var y0 = coord.pixels.y;
+    console.log("funkcja drawHex z parametrami:",coord.coordinates.x,coord.coordinates.y,fillColor,isDebug);
     if(isDebug){
         this.context.beginPath();
         //this.context.closePath(); polacz z punktem poczatkowym sciezki
@@ -181,17 +181,8 @@ HexagonGrid.prototype.clickEvent = function (e) {
     if(center){
         console.log("znalezione dla:")
         console.log(center.coordinates.x, center.coordinates.y)
-        this.socket.emit('move', {username : username, hex : center.coordinates})
+        this.socket.emit('move', {username : username, hex : center})
     }
-    /*
-    if (tile.column >= 0 && tile.row >= 0) {
-        var drawy = tile.column % 2 == 0 ? (tile.row * this.height) + this.canvasOriginY + 6 : (tile.row * this.height) + this.canvasOriginY + 6 + (this.height / 2);
-        var drawx = (tile.column * this.side) + this.canvasOriginX;
-
-        this.drawHex(drawx, drawy - 6, "rgba(110,110,70,0.3)", "");
-    } 
-    */
-
 };
 
 //calculate distance form mouse event to hex with given coordinates

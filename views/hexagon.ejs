@@ -5,31 +5,29 @@
     <title>Document</title>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/appjs.js"></script>
-    <script>
-    /*
-    window.addEventListener('load', function() {
-            
-        var socket = io();
-        socket.on('message', function(data) {
-            
-        });
-
-        
-    });
-    */
-    </script>
+    <script src="hex.js"></script>
 </head>
 <body>
 
-    <! -- username powinien przyjsc z serwera i jakby co trzeba go przeslac --!>
-    <script src="hex.js"></script>
 
     <canvas id="HexCanvas" width="800" height="640"></canvas>
   
     <script>
+        var socket = io();
+        socket.on('endGame',function(data){
+            //TO DO jakie przyciski na dole strony i moze komunikat :)
+            console.log('Koniec gry');
+        })
+        
         var username = "<%= username %>"
-        var hexagonGrid = new HexagonGrid("HexCanvas",username, 38);
+        var hexagonGrid = new HexagonGrid("HexCanvas",username, socket, 38);
         hexagonGrid.drawHexGrid(true);
+
+        socket.on('response', function( data ){
+            hexagonGrid.drawHex(data.hex, data.color, "", false);
+            console.log(data.hex.coordinates.x, data.hex.coordinates.y);
+        })
+
     </script>
     
 </body>
