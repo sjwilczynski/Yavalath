@@ -37,9 +37,74 @@ var gamestate = {
     //user1col : "red"//(255, 0, 0)
 };
 
-function verify()
+function fullBoard()
 {
-    return -1;
+    for(var i = 0; i <= 8; i++)
+        for(var j = 0; j <= 8; j++)
+            if(hsh(i , j) != -1 && gamestate.board[hsh(i, j)] == -1)
+                return false;
+    return true;
+}
+
+function verify(x, y)
+{
+    //↔↔↔↔↔↔↔ ustalone y, przejdź po x range(max(0, y - 4), min(8, y + 4))
+    var cnt;
+    var color = -2;
+    var threeInRow = false;
+    var fourInRow = false;
+    for(var i = Math.max(0, y - 4); i <= Math.min(8, y + 4); i++)
+    {
+        if(gamestate.board[hsh(i, y)] == color)
+            cnt++;
+        else
+        {
+            color = gamestate.board[hsh(i, y)];
+            cnt = 1;
+        }
+        if(cnt == 3)
+            threeInRow = true;
+        if(cnt == 4)
+            fourInRow = true;
+    }
+    color = -2;
+    //↗↗↗↗↗ ustalone x, przejdź po y range(max(0, y - 4), min(8, y + 4))
+    for(var i = Math.max(0, x - 4); i <= Math.min(8, x + 4); i++)
+    {
+        if(gamestate.board[hsh(x, i)] == color)
+            cnt++;
+        else
+        {
+            color = gamestate.board[hsh(x, i)];
+            cnt = 1;
+        }
+        if(cnt == 3)
+            threeInRow = true;
+        if(cnt == 4)
+            fourInRow = true;
+    }
+    //↘↘↘↘↘ x++, y++ range(-min(x,y), 8 - max(x,y))
+    for(var i = -Math.min(x, y); i <= 8 - Math.max(x,y); i++)
+    {
+        if(gamestate.board[hsh(x + i, y + i)] == color)
+            cnt++;
+        else
+        {
+            color = gamestate.board[hsh(x + i, y + i)];
+            cnt = 1;
+        }
+        if(cnt == 3)
+            threeInRow = true;
+        if(cnt == 4)
+            fourInRow = true;
+    }
+    if((threeInRow && fourInRow) || fullBoard())
+        return 2;//remis (chyba że chcemy inaczej)
+    if(threeInRow)
+        return (gamestate.whoseTurn ^ 1);//remis
+    if(fourInRow)
+        return gamestate.whoseTurn;//remis
+    return -1; // gramy dalej
 }
 
 app.use( bodyParser.urlencoded({extended:true}) ) ;
@@ -109,7 +174,7 @@ io.on('connection', function(socket) {
         if(i >= 0 && gamestate.board[i] == -1)
         {
             gamestate.board[i] = userNo;
-            var isEnded = verify(); // -1 gramy dalej | 0 - user0 win | 1 - u1 w
+            var isEnded = verify(x, y); // -1 gramy dalej | 0 - user0 win | 1 - u1 w
             //gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
             if(isEnded == -1)
             {
@@ -122,7 +187,8 @@ io.on('connection', function(socket) {
                 socket.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
             if(isEnded == 1)
                 socket.emit('endGame', {winner : gamestate.user1.login, looser : gamestate.user0.login});
-            // przypadek kiedy wypełni się całą planszę a nikt nie wygrał
+            //if(isEnded == 2)
+            // socket.emit(remis) przypadek kiedy wypełni się całą planszę a nikt nie wygrał lub ktoś zrobił 3 + 4
         }
         else{
             socket.emit('response', {isValid : false});
