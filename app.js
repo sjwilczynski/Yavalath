@@ -107,11 +107,11 @@ io.on('connection', function(socket) {
             var isEnded = verify(); // -1 gramy dalej | 0 - user0 win | 1 - u1 w
             console.log(isEnded);
             if(isEnded == -1)
-                socket.emit('response', {isValid : true, hex: data.hex, color : gamestate["user" + toString(userNo) + "col"]})
+                socket.emit('response', {isValid : true, hex: data.hex, color : "blue"});//gamestate["user" + toString(userNo) + "col"]})
             if(isEnded == 0)
-                socket.emit('endGame', {winner : gamestate.user0, looser : gamestate.user1})
+                socket.emit('endGame', {winner : gamestate.user0, looser : gamestate.user1});
             if(isEnded == 1)
-                socket.emit('endGame', {winner : gamestate.user1, looser : gamestate.user0})
+                socket.emit('endGame', {winner : gamestate.user1, looser : gamestate.user0});
             // przypadek kiedy wypełni się całą planszę a nikt nie wygrał
         }
         else{
