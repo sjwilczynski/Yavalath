@@ -99,11 +99,12 @@ io.on('connection', function(socket) {
             userNo = 0;
         //else nie masz prawa wykonywać ruchów bo nie grasz (spectator mode???)
         var i = hsh(x, y);
-        
+        console.log(i);
         if(i >= 0 && gamestate.board[hsh(x,y)] == 0)
         {
             gamestate.board[hsh(x,y)] = userNo;
             var isEnded = verify(); // -1 gramy dalej | 0 - user0 win | 1 - u1 w
+            console.log(isEnded);
             if(isEnded == -1)
                 socket.emit('response', {isValid : true, hex: data.hex, color : gamestate["user" + toString(userNo) + "col"]})
             if(isEnded == 0)
