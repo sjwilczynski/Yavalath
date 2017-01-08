@@ -19,7 +19,7 @@ var bodyParser = require('body-parser');
 function hsh(x, y)
 {
     //weryfikacja czy ktoś nie podał nam niecałkowitych wartości?
-    if(x > 8 || x < 0 || y > 8 || y < 0 || (max(x, y) - min(x, y) > 4))
+    if(x > 8 || x < 0 || y > 8 || y < 0 || (Math.abs(x - y) > 4))
         return -1;
     return x + 9 * y;
 }
