@@ -114,7 +114,7 @@ io.on('connection', function(socket) {
             console.log(isEnded);
             gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
             if(isEnded == -1)
-                socket.emit('response', {isValid : true, hex: data.hex, color : gamestate["user" + toString(userNo) + "col"]});//"blue"});//
+                socket.emit('response', {isValid : true, hex: data.hex, color : gamestate["user" + userNo + "col"]});//"blue"});//
             if(isEnded == 0)
                 socket.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
             if(isEnded == 1)
