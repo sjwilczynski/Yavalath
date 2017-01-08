@@ -7,19 +7,33 @@
     <script src="/appjs.js"></script>
     <script src="hex.js"></script>
 </head>
+<style>
+    myDiv{
+        display : none;
+    }
+</style>
 <body>
 
 
     <canvas id="HexCanvas" width="800" height="640"></canvas>
+    <myDiv id = "text1" > The game is over</myDiv>
+    <myDiv id = "text2" > asfa</myDiv>
   
     <script>
+        var username = "<%= username %>"
         var socket = io();
         socket.on('endGame',function(data){
             //TO DO jakie przyciski na dole strony i moze komunikat :)
-            console.log('Koniec gry');
+            //console.log('Koniec gry');
+            document.getElementById('text1').style.display = "block";
+            document.getElementById('text2').style.display = "block";
+            if(data.winner == username){
+                document.getElementById('text2').innerHTML = "You win";
+            } else{
+               document.getElementById('text2').innerHTML = "You lose"; 
+            }
         })
         
-        var username = "<%= username %>"
         var hexagonGrid = new HexagonGrid("HexCanvas",username, socket, 38);
         hexagonGrid.drawHexGrid(true);
 
