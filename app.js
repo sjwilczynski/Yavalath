@@ -66,11 +66,13 @@ app.post('/login',(req,res)=>{
         loginDict.push({key:toLogin, value:username})
         console.log(loginDict);
         console.log('już się nie pierdoli\n');
-        if(gamestate.user0 == undefined)
-            gamestate.user0 = User(toLogin, username, "blue");
+        if(gamestate.user0 == undefined){
+            gamestate.user0 = new User(toLogin, username, "blue");
+        }
         else if(gamestate.user1 == undefined)
-            gamestate.user1 = User(toLogin, username, "red");
+            gamestate.user1 = new User(toLogin, username, "red");
         // else wypierdalaj
+        console.log(gamestate.user0.ID);
         res.render('hexagon',{ username : username });
     } 
     else{
