@@ -106,11 +106,10 @@ io.on('connection', function(socket) {
         //else nie masz prawa wykonywać ruchów bo nie grasz (spectator mode???)
         var i = hsh(x, y);
         console.log(i);
-        if(i >= 0 && gamestate.board[hsh(x,y)] == -1)
+        if(i >= 0 && gamestate.board[i] == -1)
         {
-            gamestate.board[hsh(x,y)] = userNo;
+            gamestate.board[i] = userNo;
             var isEnded = verify(); // -1 gramy dalej | 0 - user0 win | 1 - u1 w
-            console.log(isEnded);
             //gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
             if(isEnded == -1)
             {
