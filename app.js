@@ -107,12 +107,13 @@ io.on('connection', function(socket) {
                 socket.emit('endGame', {winner : gamestate.user1, looser : gamestate.user0})
             // przypadek kiedy wypełni się całą planszę a nikt nie wygrał
         }
-        else
+        else{
             socket.emit('response', {isValid : false});
+        }
         //tutaj sprawdzasz stan gry i odsylasz mi odpowiedz
         //costam costam
         //socket.emit('response', {isValid : isValid, hex: data.hex, color : color}) na razie dla testow:
-        socket.emit('response', {isValid : true, hex: data.hex, color : "blue"})
+        //socket.emit('response', {isValid : true, hex: data.hex, color : "blue"})
         //ewentualnie jak koniec gry socket.emit('endGame', {winner : user1, looser : user2})
     })
     //socket.on('chat message', function(data) {
