@@ -98,10 +98,10 @@ io.on('connection', function(socket) {
         var y = data.hex.coordinates.y;
         var username = data.username;
         var userNo;
-        if(username == gamestate.user1)
-            userNo = 1;
-        else if(username == gamestate.user0)
-            userNo = 0;
+        //if(username == gamestate.user1.login) żeby tego używać musimy być pewni że mamy 2 połączonych graczy
+        //    userNo = 1;
+        //else if(username == gamestate.user0.login)
+        //    userNo = 0;
         userNo = 0; //temporary fix
         //else nie masz prawa wykonywać ruchów bo nie grasz (spectator mode???)
         var i = hsh(x, y);
