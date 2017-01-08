@@ -29,7 +29,7 @@ var toLogin;
 
 var N = 80; // coord = x + 9 * y 
 var gamestate = {
-    board : Array.apply(0, {length: N}).map(_ => 0, Number),
+    board : Array.apply(0, {length: N}).map(_ => -1, Number),
     whoseTurn : 0,
     user0 : undefined,
     user1 : undefined,
@@ -101,13 +101,13 @@ io.on('connection', function(socket) {
         //else nie masz prawa wykonywać ruchów bo nie grasz (spectator mode???)
         var i = hsh(x, y);
         console.log(i);
-        if(i >= 0 && gamestate.board[hsh(x,y)] == 0)
+        if(i >= 0 && gamestate.board[hsh(x,y)] == -1)
         {
             gamestate.board[hsh(x,y)] = userNo;
             var isEnded = verify(); // -1 gramy dalej | 0 - user0 win | 1 - u1 w
             console.log(isEnded);
             if(isEnded == -1)
-                socket.emit('response', {isValid : true, hex: data.hex, color : "blue"});//gamestate["user" + toString(userNo) + "col"]})
+                socket.emit('response', {isValid : true, hex: data.hex, color : gamestate["user" + toString(userNo) + "col"]});//"blue"});//
             if(isEnded == 0)
                 socket.emit('endGame', {winner : gamestate.user0, looser : gamestate.user1});
             if(isEnded == 1)
