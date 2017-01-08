@@ -18,6 +18,9 @@ var bodyParser = require('body-parser');
 
 function hsh(x, y)
 {
+    //weryfikacja czy ktoś nie podał nam niecałkowitych wartości?
+    if(x > 8 || x < 0 || y > 8 || y < 0 || max(x, y) - min(x, y) > 4)
+        return -1;
     return x + 9 * y;
 }
 
@@ -95,7 +98,9 @@ io.on('connection', function(socket) {
         else if(username == gamestate.user0)
             userNo = 0;
         //else nie masz prawa wykonywać ruchów bo nie grasz (spectator mode???)
-        if(gamestate.board[hsh(x,y)] == 0)
+        var i = hsh(x, y);
+        
+        if(i >= 0 && gamestate.board[hsh(x,y)] == 0)
         {
             gamestate.board[hsh(x,y)] = userNo;
             var isEnded = verify(); // -1 gramy dalej | 0 - user0 win | 1 - u1 w
