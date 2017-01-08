@@ -97,6 +97,7 @@ io.on('connection', function(socket) {
             userNo = 1;
         else if(username == gamestate.user0)
             userNo = 0;
+        userNo = 0; //temporary fix
         //else nie masz prawa wykonywać ruchów bo nie grasz (spectator mode???)
         var i = hsh(x, y);
         console.log(i);
