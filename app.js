@@ -34,7 +34,7 @@ var gamestate = {
     user0 : undefined,
     user1 : undefined,
     user0col : "blue",//(0, 0, 255),
-    user1col : "red",//(255, 0, 0)
+    user1col : "red"//(255, 0, 0)
 };
 
 function verify()
@@ -105,7 +105,9 @@ io.on('connection', function(socket) {
         {
             gamestate.board[hsh(x,y)] = userNo;
             var isEnded = verify(); // -1 gramy dalej | 0 - user0 win | 1 - u1 w
+            //var currColor = 
             console.log(isEnded);
+            gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
             if(isEnded == -1)
                 socket.emit('response', {isValid : true, hex: data.hex, color : gamestate["user" + toString(userNo) + "col"]});//"blue"});//
             if(isEnded == 0)
