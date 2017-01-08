@@ -114,10 +114,12 @@ io.on('connection', function(socket) {
             console.log(isEnded);
             gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
             if(isEnded == -1)
-                if(gamestate.whoseTurn == 0)
+            {
+                if(gamestate.whoseTurn == 1) // wcześniej zamieniliśmy już
                     socket.emit('response', {isValid : true, hex: data.hex, color : gamestate.user0.color});//"blue"});//
                 if(gamestate.whoseTurn == 0)
                     socket.emit('response', {isValid : true, hex: data.hex, color : gamestate.user1.color});//"blue"});//
+            }
             if(isEnded == 0)
                 socket.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
             if(isEnded == 1)
