@@ -191,6 +191,7 @@ io.on('connection', function(socket) {
     }
     socket.on('move',function(data){
         socket.emit('debug', {info : 'in move'});
+        socket.emit('debug', {info : 'in move'});
         console.log(data.username);
         console.log(data.hex.coordinates.x, data.hex.coordinates.y);
         var x = data.hex.coordinates.x; 
