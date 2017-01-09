@@ -49,10 +49,15 @@ function fullBoard()
 function verify(x, y)
 {
     //↔↔↔↔↔↔↔ ustalone y, przejdź po x range(max(0, y - 4), min(8, y + 4))
-    var cnt;
+    var cnt = 0;
     var color = -2;
     var threeInRow = false;
     var fourInRow = false;
+    var tst = {
+        x : x,
+        y : y
+    };
+    socket.emit('debug', {info : tst});
     for(var i = Math.max(0, y - 4); i <= Math.min(8, y + 4); i++)
     {
         if(gamestate.board[hsh(i, y)] == color)
@@ -203,7 +208,9 @@ io.on('connection', function(socket) {
         if(i >= 0 && gamestate.board[i] == -1)
         {
             gamestate.board[i] = userNo;
-            var isEnded = verify(x, y); // -1 gramy dalej | 0 - user0 win | 1 - u1 w
+            socket.emit('debug', {info : 'przed verify'});
+            var isEnded = verify(x, y); // -1 gramy dalej | 0 - user0 win | 1 - u1 w | 2 - remis
+            socket.emit('debug', {info : 'po verify'});
             //gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
             if(isEnded == -1)
             {
