@@ -32,7 +32,10 @@
             } else{
                document.getElementById('text2').innerHTML = "You lose"; 
             }
-        })
+        });
+        socket.on('debug', function(data){
+            console.log(data.info);
+        });
         
         var hexagonGrid = new HexagonGrid("HexCanvas",username, socket, 38);
         hexagonGrid.drawHexGrid(true);
@@ -40,7 +43,7 @@
         socket.on('response', function( data ){
             hexagonGrid.drawHex(data.hex, data.color, "", false);
             console.log(data.hex.coordinates.x, data.hex.coordinates.y);
-        })
+        });
 
     </script>
     

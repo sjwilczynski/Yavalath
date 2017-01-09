@@ -66,7 +66,17 @@ function verify(x, y)
             threeInRow = true;
         if(cnt == 4)
             fourInRow = true;
+
+        var info = {
+            threeInRow : threeInRow,
+            fourInRow : fourInRow,
+            cnt : cnt,
+            color : color,
+            nrtestu : (2, i)
+        };
+        socket.emit('debug', {info : info});
     }
+    
     color = -2;
     //↗↗↗↗↗ ustalone x, przejdź po y range(max(0, y - 4), min(8, y + 4))
     for(var i = Math.max(0, x - 4); i <= Math.min(8, x + 4); i++)
@@ -83,9 +93,18 @@ function verify(x, y)
         if(cnt == 4)
             fourInRow = true;
     }
+    color = -2;
     //↘↘↘↘↘ x++, y++ range(-min(x,y), 8 - max(x,y))
     for(var i = -Math.min(x, y); i <= 8 - Math.max(x,y); i++)
     {
+        var info = {
+            threeInRow : threeInRow,
+            fourInRow : fourInRow,
+            cnt : cnt,
+            color : color,
+            nrtestu : (3, i)
+        };
+        socket.emit('debug', {info : info});
         if(gamestate.board[hsh(x + i, y + i)] == color)
             cnt++;
         else
@@ -97,6 +116,15 @@ function verify(x, y)
             threeInRow = true;
         if(cnt == 4)
             fourInRow = true;
+
+        var info = {
+            threeInRow : threeInRow,
+            fourInRow : fourInRow,
+            cnt : cnt,
+            color : color,
+            nrtestu : (4, i)
+        };
+        socket.emit('debug', {info : info});
     }
     if((threeInRow && fourInRow) || fullBoard())
         return 2;//remis (chyba że chcemy inaczej)
@@ -117,12 +145,10 @@ app.get('/', function(req, res) {
 });
 
 app.get('/login', (req,res) =>{
-    //res.toLogin = req.toLogin;
     console.log('logging in\n');
     res.render('login')
 })
 app.post('/login',(req,res)=>{
-    //console.log(req.body.username);
     var username = req.body.username
     var passwd = req.body.pwd
     console.log(username, passwd, toLogin);
