@@ -70,11 +70,12 @@ function verify(x, y)
             cnt++;
         else
         {
+            if(cnt == 3)
+                threeInRow = true;
             color = gamestate.board[hsh(i, y)];
             cnt = 1;
         }
-        if(cnt == 3)
-            threeInRow = true;
+        
         if(cnt == 4)
             fourInRow = true;
 
@@ -88,7 +89,8 @@ function verify(x, y)
         };
         console.log(info);
     }
-    
+    if(cnt == 3)
+        threeInRow = true;
     color = -2;
     //↗↗↗↗↗ ustalone x, przejdź po y range(max(0, y - 4), min(8, y + 4))
     for(var i = Math.max(0, x - 4); i <= Math.min(8, x + 4); i++)
@@ -99,9 +101,9 @@ function verify(x, y)
         {
             color = gamestate.board[hsh(x, i)];
             cnt = 1;
+            if(cnt == 3)
+                threeInRow = true;
         }
-        if(cnt == 3)
-            threeInRow = true;
         if(cnt == 4)
             fourInRow = true;
 
@@ -115,6 +117,8 @@ function verify(x, y)
         };
         console.log(info);
     }
+    if(cnt == 3)
+        threeInRow = true;
     color = -2;
     //↘↘↘↘↘ x++, y++ range(-min(x,y), 8 - max(x,y))
     for(var i = -Math.min(x, y); i <= 8 - Math.max(x,y); i++)
@@ -125,9 +129,9 @@ function verify(x, y)
         {
             color = gamestate.board[hsh(x + i, y + i)];
             cnt = 1;
+            if(cnt == 3)
+                threeInRow = true;
         }
-        if(cnt == 3)
-            threeInRow = true;
         if(cnt == 4)
             fourInRow = true;
 
@@ -141,12 +145,15 @@ function verify(x, y)
         };
         console.log(info);
     }
+    if(cnt == 3)
+        threeInRow = true;
+
     if((threeInRow && fourInRow) || fullBoard())
         return 2;//remis (chyba że chcemy inaczej)
     if(threeInRow)
-        return (gamestate.whoseTurn ^ 1);//remis
+        return (gamestate.whoseTurn ^ 1);//przegrana
     if(fourInRow)
-        return gamestate.whoseTurn;//remis
+        return gamestate.whoseTurn;//wygrana
     return -1; // gramy dalej
 }
 
