@@ -260,3 +260,4 @@ console.log( 'server listens' );
 //linki z gry /game1, /game2, /game3
 
 // zaprogramowac disconnect
+// zaprogramowac restart pod plansza
