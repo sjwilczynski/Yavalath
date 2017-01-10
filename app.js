@@ -201,37 +201,37 @@ io.on('connection', function(socket) {
         var y = data.hex.coordinates.y;
         var username = data.username;
         var userNo;
-        //if(username == gamestate.user1.login) żeby tego używać musimy być pewni że mamy 2 połączonych graczy
-        //    userNo = 1;
-        //else if(username == gamestate.user0.login)
-        //    userNo = 0;
-        userNo = 0; //temporary fix
+        if(username == gamestate.user1.login) //żeby tego używać musimy być pewni że mamy 2 połączonych graczy
+            userNo = 1;
+        else if(username == gamestate.user0.login)
+            userNo = 0;
+        //userNo = 0; //temporary fix
         //else nie masz prawa wykonywać ruchów bo nie grasz (spectator mode???)
         var i = hsh(x, y);
         console.log(i);
-        if(i >= 0 && gamestate.board[i] == -1)
+        if(i >= 0 && gamestate.board[i] == -1 && gamestate.whoseTurn == userNo)
         {
             gamestate.board[i] = userNo;
             console.log('przed verify');
             var isEnded = verify(x, y); // -1 gramy dalej | 0 - user0 win | 1 - u1 w | 2 - remis
             console.log('po verify');
-            //gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
             if(isEnded == -1)
             {
                 if(gamestate.whoseTurn == 0) // wcześniej zamieniliśmy już
-                    socket.emit('response', {isValid : true, hex: data.hex, color : gamestate.user0.color});//"blue"});//
+                    io.emit('response', {isValid : true, hex: data.hex, color : gamestate.user0.color});//"blue"});//
                 if(gamestate.whoseTurn == 1)
-                    socket.emit('response', {isValid : true, hex: data.hex, color : gamestate.user1.color});//"blue"});//
+                    io.emit('response', {isValid : true, hex: data.hex, color : gamestate.user1.color});//"blue"});//
+                gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
             }
             if(isEnded == 0)
-                socket.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
+                io.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
             if(isEnded == 1)
-                socket.emit('endGame', {winner : gamestate.user1.login, looser : gamestate.user0.login});
+                io.emit('endGame', {winner : gamestate.user1.login, looser : gamestate.user0.login});
             //if(isEnded == 2)
             // socket.emit(remis) przypadek kiedy wypełni się całą planszę a nikt nie wygrał lub ktoś zrobił 3 + 4
         }
         else{
-            socket.emit('response', {isValid : false});
+            io.emit('response', {isValid : false});
         }
     })
     //socket.on('chat message', function(data) {
