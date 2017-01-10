@@ -32,9 +32,7 @@ var gamestate = {
     board : Array.apply(0, {length: N}).map(_ => -1, Number),
     whoseTurn : 0,
     user0 : undefined,
-    user1 : undefined//,
-    //user0col : "blue",//(0, 0, 255),
-    //user1col : "red"//(255, 0, 0)
+    user1 : undefined
 };
 
 function fullBoard()
@@ -57,10 +55,10 @@ function verify(x, y)
         x : x,
         y : y
     };
-    socket.emit('debug', {info : tst});
+    console.log(tst);
     for(var i = Math.max(0, y - 4); i <= Math.min(8, y + 4); i++)
     {
-        if(gamestate.board[hsh(i, y)] == color)
+        if(gamestate.board[hsh(i, y)] >= 0 && gamestate.board[hsh(i, y)] == color)
             cnt++;
         else
         {
@@ -77,16 +75,17 @@ function verify(x, y)
             fourInRow : fourInRow,
             cnt : cnt,
             color : color,
-            nrtestu : (2, i)
+            test : "fst",
+            i : i
         };
-        socket.emit('debug', {info : info});
+        console.log(info);
     }
     
     color = -2;
     //↗↗↗↗↗ ustalone x, przejdź po y range(max(0, y - 4), min(8, y + 4))
     for(var i = Math.max(0, x - 4); i <= Math.min(8, x + 4); i++)
     {
-        if(gamestate.board[hsh(x, i)] == color)
+        if(gamestate.board[hsh(x, i)] >= 0 && gamestate.board[hsh(x, i)] == color)
             cnt++;
         else
         {
@@ -97,20 +96,22 @@ function verify(x, y)
             threeInRow = true;
         if(cnt == 4)
             fourInRow = true;
-    }
-    color = -2;
-    //↘↘↘↘↘ x++, y++ range(-min(x,y), 8 - max(x,y))
-    for(var i = -Math.min(x, y); i <= 8 - Math.max(x,y); i++)
-    {
+
         var info = {
             threeInRow : threeInRow,
             fourInRow : fourInRow,
             cnt : cnt,
             color : color,
-            nrtestu : (3, i)
+            test : "nd",
+            i : i
         };
-        socket.emit('debug', {info : info});
-        if(gamestate.board[hsh(x + i, y + i)] == color)
+        console.log(info);
+    }
+    color = -2;
+    //↘↘↘↘↘ x++, y++ range(-min(x,y), 8 - max(x,y))
+    for(var i = -Math.min(x, y); i <= 8 - Math.max(x,y); i++)
+    {
+        if(gamestate.board[hsh(x + i, y + i)] >= 0 && gamestate.board[hsh(x + i, y + i)] == color)
             cnt++;
         else
         {
@@ -127,9 +128,10 @@ function verify(x, y)
             fourInRow : fourInRow,
             cnt : cnt,
             color : color,
-            nrtestu : (4, i)
+            test : "rd",
+            i : i
         };
-        socket.emit('debug', {info : info});
+        console.log(info);
     }
     if((threeInRow && fourInRow) || fullBoard())
         return 2;//remis (chyba że chcemy inaczej)
@@ -151,11 +153,11 @@ app.get('/', function(req, res) {
 
 app.get('/login', (req,res) =>{
     console.log('logging in\n');
-    res.render('login')
+    res.render('login');
 })
 app.post('/login',(req,res)=>{
-    var username = req.body.username
-    var passwd = req.body.pwd
+    var username = req.body.username;
+    var passwd = req.body.pwd;
     console.log(username, passwd, toLogin);
     
     if(username != ''){ // TODO baza danych
@@ -183,15 +185,16 @@ server.listen( process.env.PORT || 3000 );
 io.on('connection', function(socket) {
     console.log('client connected:' + socket.id);
     console.log(socket.id in loginDict);
-    if(socket.id in loginDict){}
+    if(socket.id in loginDict){
+        console.log('bug?');
+    }
     else
     {
         toLogin = socket.id;
-        console.log(socket.id in loginDict);
+        console.log('wzor?' , socket.id in loginDict);
     }
     socket.on('move',function(data){
-        socket.emit('debug', {info : 'in move'});
-        socket.emit('debug', {info : 'in move'});
+        console.log('in move');
         console.log(data.username);
         console.log(data.hex.coordinates.x, data.hex.coordinates.y);
         var x = data.hex.coordinates.x; 
@@ -209,9 +212,9 @@ io.on('connection', function(socket) {
         if(i >= 0 && gamestate.board[i] == -1)
         {
             gamestate.board[i] = userNo;
-            socket.emit('debug', {info : 'przed verify'});
+            console.log('przed verify');
             var isEnded = verify(x, y); // -1 gramy dalej | 0 - user0 win | 1 - u1 w | 2 - remis
-            socket.emit('debug', {info : 'po verify'});
+            console.log('po verify');
             //gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
             if(isEnded == -1)
             {
@@ -230,11 +233,6 @@ io.on('connection', function(socket) {
         else{
             socket.emit('response', {isValid : false});
         }
-        //tutaj sprawdzasz stan gry i odsylasz mi odpowiedz
-        //costam costam
-        //socket.emit('response', {isValid : isValid, hex: data.hex, color : color}) na razie dla testow:
-        //socket.emit('response', {isValid : true, hex: data.hex, color : "blue"})
-        //ewentualnie jak koniec gry socket.emit('endGame', {winner : user1, looser : user2})
     })
     //socket.on('chat message', function(data) {
     //    io.emit('chat message', data); // do wszystkich
