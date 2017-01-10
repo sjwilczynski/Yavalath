@@ -230,10 +230,12 @@ io.on('connection', function(socket) {
             if(isEnded == 0){
                 io.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
                 gamestate.isOver = 1;
+                gamestate = new Gamestate();
             }
             if(isEnded == 1){
                 io.emit('endGame', {winner : gamestate.user1.login, looser : gamestate.user0.login});
                 gamestate.isOver = 1;
+                gamestate = new Gamestate();
             }
             if(isEnded == 2){
                 io.emit('draw', {});
@@ -252,3 +254,9 @@ console.log( 'server listens' );
 //co robic kiedy ktos umyslnie wpisuje link w przegladarce inny niz standardowy
 //zrobic jeszcze 404
 //linki -> /login, /rooms, /game
+
+
+//zobaczyc czy czasem sam socket nie moze miec login i passwd
+//linki z gry /game1, /game2, /game3
+
+// zaprogramowac disconnect
