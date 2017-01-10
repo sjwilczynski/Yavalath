@@ -28,6 +28,13 @@ var loginDict = []; // socket.id - key | login - value
 var toLogin;
 
 var N = 80; // coord = x + 9 * y 
+function Gamestate(){
+    this.board = Array.apply(0, {length: N}).map(_ => -1, Number);
+    this.whoseTurn = 0;
+    this.user0 = undefined;
+    this.user1 = undefined;
+    this.isOver = 0;
+}
 var gamestate = {
     board : Array.apply(0, {length: N}).map(_ => -1, Number),
     whoseTurn : 0,
@@ -170,7 +177,7 @@ app.post('/login',(req,res)=>{
         else if(gamestate.user1 == undefined)
             gamestate.user1 = new User(toLogin, username, "red");
         // else precz (jeszcze ktos bedzie patrzyl w ten kod ;p)
-        res.render('hexagon',{ username : username });
+        res.render('hexagon',{ username : username }); //milo by bylo zrobic redirect na inny link
     } 
     else{
         res.render('login')
@@ -191,7 +198,7 @@ io.on('connection', function(socket) {
     {
         toLogin = socket.id;
         console.log('wzor?' , socket.id in loginDict);
-    }
+    } //jak to powyzej mialoby wygladac
     socket.on('move',function(data){
         console.log('in move');
         console.log(data.username);
@@ -204,7 +211,6 @@ io.on('connection', function(socket) {
             userNo = 1;
         else if(username == gamestate.user0.login)
             userNo = 0;
-        //else nie masz prawa wykonywać ruchów bo nie grasz (spectator mode???)
         var i = hsh(x, y);
         console.log(i);
         if(i >= 0 && gamestate.board[i] == -1 && gamestate.whoseTurn == userNo && !gamestate.isOver)
@@ -216,6 +222,8 @@ io.on('connection', function(socket) {
             io.emit('response', {isValid : true, hex: data.hex, color : gamestate['user' + userNo].color}); //wysylamy na razie sygnal do wsyztskich
             //pomysly: zrobic zdarzenie na sockecie move+username i tylko takie odbierac
             //wysylac do wszytskich i sprawdzac czy przyszlo od twojego przeciwnika
+            //nie wiem o co chodzi z tym toLogin ale jak jakis z tych pomyslow to nie bedzie potrzebne
+            //trzeba profesora zapytac
             if(isEnded == -1){
                 gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
             }
@@ -238,3 +246,9 @@ io.on('connection', function(socket) {
 });
 
 console.log( 'server listens' );
+
+
+//jak juz bedzie ten podzial na pokoje to wypadaloby zeby laczyl sie do socketa dopiero jak sie pojawia plansza -> wtedy juz powinno byc dwoch graczy
+//co robic kiedy ktos umyslnie wpisuje link w przegladarce inny niz standardowy
+//zrobic jeszcze 404
+//linki -> /login, /rooms, /game
