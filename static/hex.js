@@ -67,10 +67,11 @@ function generateGridCoordinates( v1 , v2, grid0X, grid0Y){
     }
     return grids;
 }
-function HexagonGrid(canvasId, username, socket, radius) {
+function HexagonGrid(canvasId, username, id, socket, radius) {
     
     this.radius = radius;
     this.username = username;
+    this.id = id;
     this.socket = socket;
 
     this.height = Math.sqrt(3) * radius;
@@ -182,7 +183,7 @@ HexagonGrid.prototype.clickEvent = function (e) {
     if(center){
         console.log("znalezione dla:")
         console.log(center.coordinates.x, center.coordinates.y)
-        this.socket.emit('move', {username : username, hex : center})
+        this.socket.emit('move', {username : username, id : id, hex : center})
     }
 };
 

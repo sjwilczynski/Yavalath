@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/appjs.js"></script>
     <script src="hex.js"></script>
 </head>
 <style>
@@ -20,8 +19,10 @@
     <myDiv id = "text2" > asfa</myDiv>
   
     <script>
-        var username = "<%= username %>"
+        var username = "<%= username %>";
+        var id = "<%= id %>";
         var socket = io();
+        socket.emit('MyConnection', {id : id, username : username});
         socket.on('endGame',function(data){
             //TO DO jakie przyciski na dole strony i moze komunikat :)
             //console.log('Koniec gry');
@@ -45,7 +46,7 @@
         });
         */
         
-        var hexagonGrid = new HexagonGrid("HexCanvas",username, socket, 38);
+        var hexagonGrid = new HexagonGrid("HexCanvas",username, id, socket, 38);
         hexagonGrid.drawHexGrid(true);
 
         socket.on('response', function( data ){

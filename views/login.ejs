@@ -1,15 +1,65 @@
-<html>
-    <body>
-        <form method="POST" action = "/rooms" >
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+    html, body, form {
+        height: 100%;
+        overflow: hidden;
+    }
+
+    form {
+        display         : flex;
+        justify-content : center;
+        align-items     : center;        
+    }
+
+    #login {
+        padding          : 20px;
+        border           : 1px solid black;
+    }
+
+    #login div {
+        overflow : auto;
+    }
+
+    #login input {
+        float : right;
+    }
+
+    button {
+        clear : both;
+    }
+   
+    .message {
+        color : red;
+    }
+    </style>
+</head>
+<body>
+    <form method="POST" action = "/rooms">
+    <div id='login'>
         <div>
-            Login: <input type='text' name='username' />
+        Logowanie
         </div>
         <div>
-        Password: <input type='password' name='pwd' /> 
+        <input type='text' name='username' />
+        <label>Nazwa użytkownika:</label>
         </div>
         <div>
-        <button>Login</button>
+        <input type='password' name='pwd' />
+        <label>Hasło:</label>
         </div>
+        <div>
+            <button>Zaloguj</button>
+        </div>
+        <% if ( locals.message ) { %>
+            <div class='message'>
+                <%= locals.message %>
+            </div>
+        <% } %>
+    </div>
     </form>
 </body>
-</html>	
+</html>

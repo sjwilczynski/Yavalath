@@ -1,19 +1,29 @@
 var http = require('http');
 var socket = require('socket.io');
 var express = require('express');
+var cookieParser = require('cookie-parser');
 
 var app = express();
 var server = http.createServer(app);
 var io = socket(server);
 var bodyParser = require('body-parser');
+var path = require('path');
+app.use(cookieParser('sgs90890s8g90as8rg90as8g9r8a0srg8'));
+app.use( bodyParser.urlencoded({extended:true}) ) ;
+//app.use( express.static('./static'));
+//zobacz co probuje otworzyc (jaki url)
+app.use(express.static(path.join(__dirname, 'static')));
+app.set('view engine', 'ejs');
+app.set('views', './views');
 		
 
 
-function User(ID, login, color) {
-    this.ID = ID;
+function User(login, color, socket) {
     this.login = login;
     this.color = color;
+    this.socket = socket;
 }
+
 //User.prototype.newParam = "param";
 
 function hsh(x, y)
@@ -24,24 +34,26 @@ function hsh(x, y)
     return x + 9 * y;
 }
 
-var loginDict = []; // socket.id - key | login - value
-var toLogin;
+//var loginDict = []; // socket.id - key | login - value
+//var toLogin;
 
 var N = 80; // coord = x + 9 * y 
-function Gamestate(){
+
+var AllGameStates = [];
+for(var i = 0; i < 5; i++){
+    AllGameStates.push(new Gamestate(i));
+}
+
+function Gamestate(id){
+    this.id = id
     this.board = Array.apply(0, {length: N}).map(_ => -1, Number);
     this.whoseTurn = 0;
     this.user0 = undefined;
     this.user1 = undefined;
     this.isOver = 0;
+    this.areTwoPlayers = 0;
 }
-var gamestate = {
-    board : Array.apply(0, {length: N}).map(_ => -1, Number),
-    whoseTurn : 0,
-    user0 : undefined,
-    user1 : undefined,
-    isOver : 0
-};
+
 
 function fullBoard()
 {
@@ -157,35 +169,23 @@ function verify(x, y)
     return -1; // gramy dalej
 }
 
-app.use( bodyParser.urlencoded({extended:true}) ) ;
-app.use( express.static('./static'));
-app.set('view engine', 'ejs');
-app.set('views', './views');
-
 app.get('/', function(req, res) {
-    res.redirect('login');
+    res.redirect('/rooms');
 });
 
 app.get('/login', (req,res) =>{
-    console.log('logging in\n');
+    //console.log('logging in\n');
     res.render('login');
 })
 
 app.post('/rooms',(req,res) =>{
-    //wysylanie info o stanie gier na serwerze -> tablica gamestate wystarczy
-    res.render('rooms')
-})
-
-app.post('/game',(req,res)=>{
-    //moze najfajniej by to bylo jednak z ciasteczkiem zrobic
-    //po poprawnym zalogowaniu dostaje ciasteczko ze swoim username i teraz moze spokojnie przechodzic na wszystkie linki: /rooms, /game
     var username = req.body.username;
     var passwd = req.body.pwd;
-    console.log(username, passwd, toLogin);
     
-    if(username != ''){ // TODO baza danych
-        loginDict.push({key:toLogin, value:username})
-        console.log(loginDict);
+    if(username != ''){
+        //weryfikacja danych z baza
+         // TODO baza danych
+         /*
         if(gamestate.user0 == undefined){
             gamestate.user0 = new User(toLogin, username, "blue");
         }
@@ -193,11 +193,46 @@ app.post('/game',(req,res)=>{
             gamestate.user1 = new User(toLogin, username, "red");
         // else precz (jeszcze ktos bedzie patrzyl w ten kod ;p)
         res.render('hexagon',{ username : username }); //milo by bylo zrobic redirect na inny link
+        */
+        res.cookie('username', req.body.username, {signed : true});
+        res.render('rooms',{AllGameStates : AllGameStates, username : req.signedCookies.username})
     } 
     else{
-        res.render('login')
+        res.render('login',{ message : "Zły login lub hasło" })
     }
+});
+
+app.get('/rooms', authorize, (req,res) =>{
+    res.render('rooms', {AllGameStates : AllGameStates, username : req.signedCookies.username});
+});
+
+//app.get('/game/:id', authorize, (req,res) =>{ dlaczego jak przesylam url w ten sposob to nie widzi mi folderu static -> traktuje hex.js jako pojscie na /game/hex.js
+app.get('/game:id', authorize, (req,res) =>{
+    console.log(req.url);
+    var id = req.params.id;
+    //sprawdzanie czy jest wolne miejsce i czy jestem pierwszy ktory wchodzi na gierke
+    //czy drugi -> wtedy trzeba wyslac jakies zdarzenie do goscia !!
+    console.log(id, req.signedCookies.username)
+    res.render('hexagon', {id:id, username : req.signedCookies.username});
+});
+
+
+// middleware autentykacji
+function authorize(req, res, next) {
+    console.log('authorize', req.signedCookies.username, req.signedCookies.username != undefined )
+    if ( req.signedCookies.username != undefined ) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
+}
+
+/*
+app.use((req,res)=>{
+    //res.cookie('foo', '', { maxAge : -1 } ); 
+    res.render('404',{url : req.url})
 })
+*/
 
 
 //"key" in obj // true, regardless of the actual value
@@ -205,15 +240,21 @@ server.listen( process.env.PORT || 3000 );
 
 io.on('connection', function(socket) {
     console.log('client connected:' + socket.id);
-    console.log(socket.id in loginDict);
-    if(socket.id in loginDict){
-        console.log('bug?');
-    }
-    else
-    {
-        toLogin = socket.id;
-        console.log('wzor?' , socket.id in loginDict);
-    } //jak to powyzej mialoby wygladac
+    
+    socket.on('MyConnection', function(data) {
+        console.log('in MyConnection')
+        var id = data.id;
+        var username = data.username;
+        if(AllGameStates[id].user0 == undefined){
+            AllGameStates[id].user0 = new User(username, "blue", socket);
+        }
+        else if(AllGameStates[id].user1 == undefined){
+            AllGameStates[id].user1 = new User(username, "red", socket);
+            AllGameStates[id].areTwoPlayers = 1;
+        } else{
+            //socket.emit('gameIsOccupied') TODO
+        }
+    })
     socket.on('move',function(data){
         console.log('in move');
         console.log(data.username);
@@ -222,42 +263,53 @@ io.on('connection', function(socket) {
         var y = data.hex.coordinates.y;
         var username = data.username;
         var userNo;
-        if(username == gamestate.user1.login) //żeby tego używać musimy być pewni że mamy 2 połączonych graczy
-            userNo = 1;
-        else if(username == gamestate.user0.login)
-            userNo = 0;
-        var i = hsh(x, y);
-        console.log(i);
-        if(i >= 0 && gamestate.board[i] == -1 && gamestate.whoseTurn == userNo && !gamestate.isOver)
-        {
-            gamestate.board[i] = userNo;
-            console.log('przed verify');
-            var isEnded = verify(x, y); // -1 gramy dalej | 0 - user0 win | 1 - u1 w | 2 - remis
-            console.log('po verify');
-            io.emit('response', {isValid : true, hex: data.hex, color : gamestate['user' + userNo].color}); //wysylamy na razie sygnal do wsyztskich
-            //pomysly: zrobic zdarzenie na sockecie move+username i tylko takie odbierac
-            //wysylac do wszytskich i sprawdzac czy przyszlo od twojego przeciwnika
-            //nie wiem o co chodzi z tym toLogin ale jak jakis z tych pomyslow to nie bedzie potrzebne
-            //trzeba profesora zapytac
-            if(isEnded == -1){
-                gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
+        var id = data.id
+        if(AllGameStates[id].areTwoPlayers == 1){
+            if(username == AllGameStates[id].user1.login) //żeby tego używać musimy być pewni że mamy 2 połączonych graczy
+                userNo = 1;
+            else if(username == AllGameStates[id].user0.login)
+                userNo = 0;
+            var i = hsh(x, y);
+            console.log(i);
+            if(i >= 0 && AllGameStates[id].board[i] == -1 && AllGameStates[id].whoseTurn == userNo && !AllGameStates[id].isOver)
+            {
+                AllGameStates[id].board[i] = userNo;
+                console.log('przed verify');
+                var isEnded = verify(x, y); // -1 gramy dalej | 0 - user0 win | 1 - u1 w | 2 - remis
+                console.log('po verify');
+                opSocket = AllGameStates[id]['socket' + (userNo ^ 1)];
+                
+                socket.emit('response', {isValid : true, hex: data.hex, color : AllGameStates[id]['user' + userNo].color});
+                opSocket.emit('response', {isValid : true, hex: data.hex, color : AllGameStates[id]['user' + userNo].color});
+                //pomysly: zrobic zdarzenie na sockecie move+username i tylko takie odbierac
+                //wysylac do wszytskich i sprawdzac czy przyszlo od twojego przeciwnika
+                //nie wiem o co chodzi z tym toLogin ale jak jakis z tych pomyslow to nie bedzie potrzebne
+                //trzeba profesora zapytac
+                if(isEnded == -1){
+                    AllGameStates[id].whoseTurn = (AllGameStates[id].whoseTurn ^ 1);
+                }
+                if(isEnded == 0){
+                    socket.emit('endGame', {winner : AllGameStates[id].user0.login, looser : AllGameStates[id].user1.login});
+                    opSocket.emit('endGame', {winner : AllGameStates[id].user0.login, looser : AllGameStates[id].user1.login});
+                    AllGameStates[id].isOver = 1;
+                    //AllGameStates[id] = new Gamestate(id);
+                }
+                if(isEnded == 1){
+                    socket.emit('endGame', {winner : AllGameStates[id].user1.login, looser : AllGameStates[id].user0.login});
+                    opSocket.emit('endGame', {winner : AllGameStates[id].user1.login, looser : AllGameStates[id].user0.login});
+                    AllGameStates[id].isOver = 1;
+                    //AllGameStates[id] = new Gamestate(id);
+                }
+                if(isEnded == 2){
+                    socket.emit('draw', {});
+                    opSocket.emit('draw', {});
+                } //przypadek kiedy wypełni się całą planszę a nikt nie wygrał lub ktoś zrobił 3 + 4
             }
-            if(isEnded == 0){
-                io.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
-                gamestate.isOver = 1;
-                gamestate = new Gamestate();
+            else{
+                socket.emit('response', {isValid : false});
             }
-            if(isEnded == 1){
-                io.emit('endGame', {winner : gamestate.user1.login, looser : gamestate.user0.login});
-                gamestate.isOver = 1;
-                gamestate = new Gamestate();
-            }
-            if(isEnded == 2){
-                io.emit('draw', {});
-            } //przypadek kiedy wypełni się całą planszę a nikt nie wygrał lub ktoś zrobił 3 + 4
-        }
-        else{
-            io.emit('response', {isValid : false});
+        } else{
+            //socket.emit('waitForSecondPlayer'); TODO
         }
     })
 });
