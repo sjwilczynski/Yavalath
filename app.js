@@ -55,7 +55,7 @@ function Gamestate(id){
 }
 
 
-function fullBoard()
+function fullBoard(gamestate)
 {
     for(var i = 0; i <= 8; i++)
         for(var j = 0; j <= 8; j++)
@@ -64,7 +64,7 @@ function fullBoard()
     return true;
 }
 
-function verify(x, y)
+function verify(x, y, gamestate)
 {
     //↔↔↔↔↔↔↔ ustalone y, przejdź po x range(max(0, y - 4), min(8, y + 4))
     var cnt = 0;
@@ -160,7 +160,7 @@ function verify(x, y)
     if(cnt == 3)
         threeInRow = true;
 
-    if((threeInRow && fourInRow) || fullBoard())
+    if((threeInRow && fourInRow) || fullBoard(gamestate))
         return 2;//remis (chyba że chcemy inaczej)
     if(threeInRow)
         return (gamestate.whoseTurn ^ 1);//przegrana
@@ -264,40 +264,41 @@ io.on('connection', function(socket) {
         var username = data.username;
         var userNo;
         var id = data.id
-        if(AllGameStates[id].areTwoPlayers == 1){
-            if(username == AllGameStates[id].user1.login) //żeby tego używać musimy być pewni że mamy 2 połączonych graczy
+        var gamestate = AllGameStates[id];
+        if(gamestate.areTwoPlayers == 1){
+            if(username == gamestate.user1.login) //żeby tego używać musimy być pewni że mamy 2 połączonych graczy
                 userNo = 1;
-            else if(username == AllGameStates[id].user0.login)
+            else if(username == gamestate.user0.login)
                 userNo = 0;
             var i = hsh(x, y);
             console.log(i);
-            if(i >= 0 && AllGameStates[id].board[i] == -1 && AllGameStates[id].whoseTurn == userNo && !AllGameStates[id].isOver)
+            if(i >= 0 && gamestate.board[i] == -1 && gamestate.whoseTurn == userNo && !gamestate.isOver)
             {
-                AllGameStates[id].board[i] = userNo;
+                gamestate.board[i] = userNo;
                 console.log('przed verify');
-                var isEnded = verify(x, y); // -1 gramy dalej | 0 - user0 win | 1 - u1 w | 2 - remis
+                var isEnded = verify(x, y, gamestate); // -1 gramy dalej | 0 - user0 win | 1 - u1 w | 2 - remis
                 console.log('po verify');
-                opSocket = AllGameStates[id]['socket' + (userNo ^ 1)];
+                var opSocket = gamestate['user' + (userNo ^ 1)].socket;
                 
-                socket.emit('response', {isValid : true, hex: data.hex, color : AllGameStates[id]['user' + userNo].color});
-                opSocket.emit('response', {isValid : true, hex: data.hex, color : AllGameStates[id]['user' + userNo].color});
+                socket.emit('response', {isValid : true, hex: data.hex, color : gamestate['user' + userNo].color});
+                opSocket.emit('response', {isValid : true, hex: data.hex, color : gamestate['user' + userNo].color});
                 //pomysly: zrobic zdarzenie na sockecie move+username i tylko takie odbierac
                 //wysylac do wszytskich i sprawdzac czy przyszlo od twojego przeciwnika
                 //nie wiem o co chodzi z tym toLogin ale jak jakis z tych pomyslow to nie bedzie potrzebne
                 //trzeba profesora zapytac
                 if(isEnded == -1){
-                    AllGameStates[id].whoseTurn = (AllGameStates[id].whoseTurn ^ 1);
+                    gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
                 }
                 if(isEnded == 0){
-                    socket.emit('endGame', {winner : AllGameStates[id].user0.login, looser : AllGameStates[id].user1.login});
-                    opSocket.emit('endGame', {winner : AllGameStates[id].user0.login, looser : AllGameStates[id].user1.login});
-                    AllGameStates[id].isOver = 1;
+                    socket.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
+                    opSocket.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
+                    gamestate.isOver = 1;
                     //AllGameStates[id] = new Gamestate(id);
                 }
                 if(isEnded == 1){
-                    socket.emit('endGame', {winner : AllGameStates[id].user1.login, looser : AllGameStates[id].user0.login});
-                    opSocket.emit('endGame', {winner : AllGameStates[id].user1.login, looser : AllGameStates[id].user0.login});
-                    AllGameStates[id].isOver = 1;
+                    socket.emit('endGame', {winner : gamestate.user1.login, looser : gamestate.user0.login});
+                    opSocket.emit('endGame', {winner : gamestate.user1.login, looser : gamestate.user0.login});
+                    gamestate.isOver = 1;
                     //AllGameStates[id] = new Gamestate(id);
                 }
                 if(isEnded == 2){
