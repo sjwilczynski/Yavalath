@@ -170,7 +170,15 @@ app.get('/login', (req,res) =>{
     console.log('logging in\n');
     res.render('login');
 })
-app.post('/login',(req,res)=>{
+
+app.post('/rooms',(req,res) =>{
+    //wysylanie info o stanie gier na serwerze -> tablica gamestate wystarczy
+    res.render('rooms')
+})
+
+app.post('/game',(req,res)=>{
+    //moze najfajniej by to bylo jednak z ciasteczkiem zrobic
+    //po poprawnym zalogowaniu dostaje ciasteczko ze swoim username i teraz moze spokojnie przechodzic na wszystkie linki: /rooms, /game
     var username = req.body.username;
     var passwd = req.body.pwd;
     console.log(username, passwd, toLogin);
@@ -268,3 +276,22 @@ console.log( 'server listens' );
 
 // zaprogramowac disconnect
 // zaprogramowac restart pod plansza
+
+/*
+1.mapa user pokoj sie przyda, tablica gamestate, gamestate zawiera sockety    STACHU
+2.ciasteczka jak w zad7.js z username -> pozwala to wchodzic na wszytskie linki, middleware autentykacji STACHU
+3.przerobienie flow z linka na link (gety posty po stronie serwera) STACHU
+4.przycisk logout na rooms.ejs i po stronie serwera STACHU
+5.restart i quit game( musza wysylac jakies zdarzenia na socket, mysle ze restart bedzie wystarczajaco spoko 
+jak bedzie go mozna zrobic tylko po zakonczeniu gry, za to quit zawsze) KUBA
+6. resetowanie stanu gry po stronie serwera KUBA
+7. zdarzenie disconnect KUBA
+8.rooms.ejs - potrzebny szablon na gamestate( 3 wiersze - user1, user2, przycisk dolacz do gry) - musza byc inde
+ksowane zeby wysylac na odpowiednie linki - KUBA
+9. rejestrowanie nowych uzytkownikow - na stronie login powinien byc przycisk - zarejestruj sie:
+sprawdza czy w bazie nie ma uzytkownika o tym nicku i jesli nie to aktualizuje baze i przekierowuje na ekran logowania STACHU
+?10.Baza danych1 - tabelka (id,username,passwd) - oprogramowanie rejestracji i weryfikacji hasla po stronie serwera
+?11.Baza danych2 - tabelka (id, Winner, Looser, Date) - na rooms pod spodem przycisk pokaz statystyki 
+po kazdej zakonczonej grze zapisywanie do statystyk
+?12. CSS zeby bylo pieknie
+*/
