@@ -1,5 +1,40 @@
 <!DOCTYPE html>
     <body>
+        <table>
+            <tr>
+                <th>RoomID</th><th>Player1</th><th>Player2</th><th>Dołącz</th>
+            </tr>
+
+            <% for(var i = 0; i < locals.AllGameStates.length; i++) { %>
+                <script>
+                </script>
+                <tr>
+                <td><%= locals.AllGameStates[i].id %></td>
+                <% if (locals.AllGameStates[i].user0) { %>
+                <td><%= locals.AllGameStates[i].user0.login%></td>
+                <% }
+                else {%>
+                <td>wolne1</td>
+                <% } %>
+                <% if (locals.AllGameStates[i].user1) { %>
+                <td><%= locals.AllGameStates[i].user1.login%></td></td>
+                <% }
+                else {%>
+                <td>wolne2</td>
+                <% } %>
+                <% if (locals.AllGameStates[i].user1 && locals.AllGameStates[i].user0) { %>
+                <td>Pełny</td></td>
+                <% }
+                else {%>
+                <td><form method="GET" action = "/game1" > <!-- nie potrafię zrobić z kurwy template dlaczego???? -->
+                <div>
+                <button>Dołącz do gry</button>
+                </div>
+                </form></td>
+                <% } %>
+                </tr>    
+            <% } %>
+            </table>
         <form method="GET" action = "/game1" >
         <div>
             Dane o grze
@@ -10,3 +45,4 @@
     </form>
 </body>
 </html>	
+
