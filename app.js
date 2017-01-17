@@ -214,15 +214,6 @@ app.post('/rooms',(req,res) =>{
     if(username != ''){
         //weryfikacja danych z baza
          // TODO baza danych
-         /*
-        if(gamestate.user0 == undefined){
-            gamestate.user0 = new User(toLogin, username, "blue");
-        }
-        else if(gamestate.user1 == undefined)
-            gamestate.user1 = new User(toLogin, username, "red");
-        // else precz (jeszcze ktos bedzie patrzyl w ten kod ;p)
-        res.render('hexagon',{ username : username }); //milo by bylo zrobic redirect na inny link
-        */
         res.cookie('username', req.body.username, {signed : true});
         res.render('rooms',{AllGameStates : AllGameStates, username : req.signedCookies.username})
     } 
@@ -345,9 +336,10 @@ io.on('connection', function(socket) {
         }
     });
     socket.on('reset', function(data){
+        console.log('jestem w reset')
         var it = findGameNo(data.username);
         if(it != -1)
-            resetGame(it);
+            resetGame(it); // w data juz jest id gry wiec ta funkcja findGameNo jest tu niepotrzebna
         //else
             //socket.emit('response', nie możesz zrestartować) - nie zawsze i nie każdy może restartować grę (znowu ewentualny spectate mode)
     });
@@ -361,7 +353,7 @@ io.on('connection', function(socket) {
         logout(socketList[i].login);
         
         socketList.splice(i, 1);
-        //usuwanie ciasteczek potrzebne??
+        //usuwanie ciasteczek potrzebne?? NIE BO CIASTECZKA SA NA WSZYSTKIE LINKI A NIE TYLKO GRE
         //socket.emit('user disconnected'); czy to jest potrzebne do czegoś?
     });
 });
@@ -369,10 +361,6 @@ io.on('connection', function(socket) {
 console.log( 'server listens' );
 
 
-//jak juz bedzie ten podzial na pokoje to wypadaloby zeby laczyl sie do socketa dopiero jak sie pojawia plansza -> wtedy juz powinno byc dwoch graczy
-//co robic kiedy ktos umyslnie wpisuje link w przegladarce inny niz standardowy
-//zrobic jeszcze 404
-//linki -> /login, /rooms, /game
 
 
 //zobaczyc czy czasem sam socket nie moze miec login i passwd
@@ -385,7 +373,7 @@ console.log( 'server listens' );
 1.mapa user pokoj sie przyda, tablica gamestate, gamestate zawiera sockety    STACHU -> DONE
 2.ciasteczka jak w zad7.js z username -> pozwala to wchodzic na wszytskie linki, middleware autentykacji STACHU -> DONE
 3.przerobienie flow z linka na link (gety posty po stronie serwera) STACHU -> DONE
-4.przycisk logout na rooms.ejs i po stronie serwera STACHU
+4.przycisk logout na rooms.ejs i po stronie serwera i 404 STACHU
 5.restart i quit game( musza wysylac jakies zdarzenia na socket, mysle ze restart bedzie wystarczajaco spoko 
 jak bedzie go mozna zrobic tylko po zakonczeniu gry, za to quit zawsze) KUBA
 6. resetowanie stanu gry po stronie serwera KUBA
@@ -398,4 +386,22 @@ sprawdza czy w bazie nie ma uzytkownika o tym nicku i jesli nie to aktualizuje b
 ?11.Baza danych2 - tabelka (id, Winner, Looser, Date) - na rooms pod spodem przycisk pokaz statystyki 
 po kazdej zakonczonej grze zapisywanie do statystyk
 ?12. CSS zeby bylo pieknie
+*/
+
+
+
+
+
+
+
+/*
+MOJE UWAGI:
+1. Nazwa logout troche nie odpowiada temu co sie dzieje -> gosciu tylko wychodzi z danej gry wiec bardzo 
+mozliwe ze po porstu wraca na strone /rooms -> jakies quitGame byloby lepsze
+2. w socket.on('reset'), data zawiera id gry wiec nie musisz go wyszukiwac po username
+3. Mozna chyba jako socketList po prostu zrobic slownik {socket.id : username} wtedy bedziesz mogl sie odwolywac
+bez przeszukiwania calej listy( jak by bylo w pizdu uzytkownikow to wazne) ( a propo tego co sie dzieje w socket.on('disconnect'))
+wtedy oczywiscie mozesz po prostu robic delete socketList[socket.id] a nie robic jakiegos splice
+4. Przydaloby sie zeby reset wygladal jak button( bo inaczej nikt sie nie kapnie zeby w niego klikac )
+
 */
