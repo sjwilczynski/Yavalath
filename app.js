@@ -403,5 +403,8 @@ mozliwe ze po porstu wraca na strone /rooms -> jakies quitGame byloby lepsze
 bez przeszukiwania calej listy( jak by bylo w pizdu uzytkownikow to wazne) ( a propo tego co sie dzieje w socket.on('disconnect'))
 wtedy oczywiscie mozesz po prostu robic delete socketList[socket.id] a nie robic jakiegos splice
 4. Przydaloby sie zeby reset wygladal jak button( bo inaczej nikt sie nie kapnie zeby w niego klikac )
+5. reset i disconnect powinny wysylac socketowe zdarzenia do przeciwnika - zrob je po stronie serwera ja zrobie po klienta
+6. Nie będzie spectate mode jak ktoś spróbuje wejść na zajeta gre wyrzucamy go
 
+DOKONCZ KUBA TE SWOJE RZECZY ZANIM SIE ZA TORCSA CZY AJK TO SIE NAZYWA WEZMIESZ PLS, to wtedy bede mogl juz prawie cala reszte zrobic
 */
