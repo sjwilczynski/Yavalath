@@ -17,6 +17,9 @@
     <canvas id="HexCanvas" width="800" height="640"></canvas>
     <myDiv id = "text1" > The game is over</myDiv>
     <myDiv id = "text2" > asfa</myDiv>
+
+    <p id="demo" onclick="reset()">Reset</p>
+
   
     <script>
         var username = "<%= username %>";
@@ -58,6 +61,11 @@
                 console.log('The move was invalid');
             }
         });
+
+        function reset() {
+            socket.emit('reset', {username : username, id : id});
+        }
+    </script>
 
     </script>
     

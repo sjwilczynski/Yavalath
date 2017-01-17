@@ -24,8 +24,6 @@ function User(login, color, socket) {
     this.socket = socket;
 }
 
-//User.prototype.newParam = "param";
-
 function hsh(x, y)
 {
     //weryfikacja czy ktoś nie podał nam niecałkowitych wartości?
@@ -34,7 +32,7 @@ function hsh(x, y)
     return x + 9 * y;
 }
 
-//var loginDict = []; // socket.id - key | login - value
+var socketList = []; // socket.id - key | login - value
 //var toLogin;
 
 var N = 80; // coord = x + 9 * y 
@@ -52,6 +50,36 @@ function Gamestate(id){
     this.user1 = undefined;
     this.isOver = 0;
     this.areTwoPlayers = 0;
+}
+
+function findGameNo(login)
+{
+    for(var i = 0; i < AllGameStates.length; i++)
+        if(AllGameStates[i].areTwoPlayers && 
+            (AllGameStates[i].user0.login == login || AllGameStates[i].user1.login == login))
+            return i;
+    return -1;
+}
+
+
+function resetGame(id)
+{
+    AllGameStates[id].board = Array.apply(0, {length: N}).map(_ => -1, Number);
+    AllGameStates[id].whoseTurn = 0;
+    AllGameStates[id].isOver = 0;
+}
+
+function logout(login) // po prostu znajdź pokój w którym grał i zresetuj grę???
+{
+    var i = findGameNo(login);
+    if(i != -1)
+    {
+        resetGame(i);
+        if(AllGameStates[i].user1.login == login)
+            AllGameStates[i].user1 = undefined;
+        else
+            AllGameStates[i].user0 = undefined;
+    }
 }
 
 
@@ -182,6 +210,7 @@ app.post('/rooms',(req,res) =>{
     var username = req.body.username;
     var passwd = req.body.pwd;
     
+    
     if(username != ''){
         //weryfikacja danych z baza
          // TODO baza danych
@@ -246,6 +275,7 @@ io.on('connection', function(socket) {
         console.log('in MyConnection')
         var id = data.id;
         var username = data.username;
+        socketList.push({id : socket.id, username : username});
         if(AllGameStates[id].user0 == undefined){
             AllGameStates[id].user0 = new User(username, "blue", socket);
         }
@@ -313,7 +343,27 @@ io.on('connection', function(socket) {
         } else{
             //socket.emit('waitForSecondPlayer'); TODO
         }
-    })
+    });
+    socket.on('reset', function(data){
+        var it = findGameNo(data.username);
+        if(it != -1)
+            resetGame(it);
+        //else
+            //socket.emit('response', nie możesz zrestartować) - nie zawsze i nie każdy może restartować grę (znowu ewentualny spectate mode)
+    });
+    socket.on('disconnect', function() {
+        console.log('Got disconnect!');
+        var i;
+        for(var k = 0; k < socketList.length; k++)
+            if(socketList[k].id == socket.id)
+                i = k;
+        //var i = socketList.id.indexOf(socket);
+        logout(socketList[i].login);
+        
+        socketList.splice(i, 1);
+        //usuwanie ciasteczek potrzebne??
+        //socket.emit('user disconnected'); czy to jest potrzebne do czegoś?
+    });
 });
 
 console.log( 'server listens' );
