@@ -73,7 +73,13 @@ function logout(login) // po prostu znajdź pokój w którym grał i zresetuj gr
 {
     var i = findGameNo(login);
     if(i != -1)
+    {
         resetGame(i);
+        if(AllGameStates[i].user1.login == login)
+            AllGameStates[i].user1 = undefined;
+        else
+            AllGameStates[i].user0 = undefined;
+    }
 }
 
 
