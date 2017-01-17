@@ -212,6 +212,7 @@ app.get('/game:id', authorize, (req,res) =>{
     var id = req.params.id;
     //sprawdzanie czy jest wolne miejsce i czy jestem pierwszy ktory wchodzi na gierke
     //czy drugi -> wtedy trzeba wyslac jakies zdarzenie do goscia !!
+    // MOZE TU WYSTARCZY ZROBIC GAME RESTART -> W ZALEZNOSCI CZY JUZ KTOS JEST CZY NIE
     console.log(id, req.signedCookies.username)
     res.render('hexagon', {id:id, username : req.signedCookies.username});
 });
@@ -331,9 +332,9 @@ console.log( 'server listens' );
 // zaprogramowac restart pod plansza
 
 /*
-1.mapa user pokoj sie przyda, tablica gamestate, gamestate zawiera sockety    STACHU
-2.ciasteczka jak w zad7.js z username -> pozwala to wchodzic na wszytskie linki, middleware autentykacji STACHU
-3.przerobienie flow z linka na link (gety posty po stronie serwera) STACHU
+1.mapa user pokoj sie przyda, tablica gamestate, gamestate zawiera sockety    STACHU -> DONE
+2.ciasteczka jak w zad7.js z username -> pozwala to wchodzic na wszytskie linki, middleware autentykacji STACHU -> DONE
+3.przerobienie flow z linka na link (gety posty po stronie serwera) STACHU -> DONE
 4.przycisk logout na rooms.ejs i po stronie serwera STACHU
 5.restart i quit game( musza wysylac jakies zdarzenia na socket, mysle ze restart bedzie wystarczajaco spoko 
 jak bedzie go mozna zrobic tylko po zakonczeniu gry, za to quit zawsze) KUBA
