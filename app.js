@@ -69,7 +69,7 @@ function resetGame(id)
     AllGameStates[id].isOver = 0;
 }
 
-function logout(login) // po prostu znajdź pokój w którym grał i zresetuj grę???
+function exitRoom(login) // po prostu znajdź pokój w którym grał i zresetuj grę???
 {
     var i = findGameNo(login);
     if(i != -1)
@@ -336,12 +336,22 @@ io.on('connection', function(socket) {
         }
     });
     socket.on('reset', function(data){
-        console.log('jestem w reset')
+        console.log('jestem w reset');
         var it = findGameNo(data.username);
         if(it != -1)
+        {
             resetGame(it); // w data juz jest id gry wiec ta funkcja findGameNo jest tu niepotrzebna
+            var userNo;
+            if(AllGameStates[it].user0.socket == socket.id)
+                userNo = 1;
+            else
+                userNo = 0;
+            var opSocket = AllGameStates[it]['user' + (userNo ^ 1)].socket;
+            socket.emit('reset', {opponent : false, id : socket.id}); // potrzebne?
+            opSocket.emit('reset', {opponent : true, id : socket.id}); //
+        }
         //else
-            //socket.emit('response', nie możesz zrestartować) - nie zawsze i nie każdy może restartować grę (znowu ewentualny spectate mode)
+            //socket.emit('response', nie możesz zrestartować) - user chce zrestartować, ale nie jest w żadnej grze
     });
     socket.on('disconnect', function() {
         console.log('Got disconnect!');
@@ -349,12 +359,22 @@ io.on('connection', function(socket) {
         for(var k = 0; k < socketList.length; k++)
             if(socketList[k].id == socket.id)
                 i = k;
-        //var i = socketList.id.indexOf(socket);
-        logout(socketList[i].login);
-        
-        socketList.splice(i, 1);
-        //usuwanie ciasteczek potrzebne?? NIE BO CIASTECZKA SA NA WSZYSTKIE LINKI A NIE TYLKO GRE
-        //socket.emit('user disconnected'); czy to jest potrzebne do czegoś?
+        exitRoom(socketList[i].login);
+        var it = findGameNo(socketList[i].username);
+        if(it != -1)
+        {
+            var userNo;
+            if(AllGameStates[it].user0.socket == socket.id)
+                userNo = 1;
+            else
+                userNo = 0;
+            var opSocket = AllGameStates[it]['user' + (userNo ^ 1)].socket;
+            
+            socketList.splice(i, 1);
+            socket.emit('user disconnected', {opponent : false, id : socket.id}); // potrzebne?
+            opSocket.emit('user disconnected', {opponent : true, id : socket.id}); //
+        }
+        //else - nie byłeś w żadnym pokoju - nikogo nie obchodzi że się rozłączyłeś (ten przypadek jest możliwy?)
     });
 });
 
@@ -397,14 +417,16 @@ po kazdej zakonczonej grze zapisywanie do statystyk
 /*
 MOJE UWAGI:
 1. Nazwa logout troche nie odpowiada temu co sie dzieje -> gosciu tylko wychodzi z danej gry wiec bardzo 
-mozliwe ze po porstu wraca na strone /rooms -> jakies quitGame byloby lepsze
-2. w socket.on('reset'), data zawiera id gry wiec nie musisz go wyszukiwac po username
+mozliwe ze po porstu wraca na strone /rooms -> jakies quitGame byloby lepsze +
+2. w socket.on('reset'), data zawiera id gry wiec nie musisz go wyszukiwac po username // gdzie restet zawiera id????
 3. Mozna chyba jako socketList po prostu zrobic slownik {socket.id : username} wtedy bedziesz mogl sie odwolywac
 bez przeszukiwania calej listy( jak by bylo w pizdu uzytkownikow to wazne) ( a propo tego co sie dzieje w socket.on('disconnect'))
 wtedy oczywiscie mozesz po prostu robic delete socketList[socket.id] a nie robic jakiegos splice
-4. Przydaloby sie zeby reset wygladal jak button( bo inaczej nikt sie nie kapnie zeby w niego klikac )
-5. reset i disconnect powinny wysylac socketowe zdarzenia do przeciwnika - zrob je po stronie serwera ja zrobie po klienta
-6. Nie będzie spectate mode jak ktoś spróbuje wejść na zajeta gre wyrzucamy go
+// może mieć znaczenie przy tysiącach użytkowników - po chuj, to podejście jest łatwiej edytować - co będzie jak będziemy potrzebować powiązać 3 wartości?
+4. Przydaloby sie zeby reset wygladal jak button( bo inaczej nikt sie nie kapnie zeby w niego klikac ) +
+5. reset i disconnect powinny wysylac socketowe zdarzenia do przeciwnika - zrob je po stronie serwera ja zrobie po klienta +
+6. Nie będzie spectate mode jak ktoś spróbuje wejść na zajeta gre wyrzucamy go 
+wydaje mi się że obecnie jest tak zrobione
 
 DOKONCZ KUBA TE SWOJE RZECZY ZANIM SIE ZA TORCSA CZY AJK TO SIE NAZYWA WEZMIESZ PLS, to wtedy bede mogl juz prawie cala reszte zrobic
 */

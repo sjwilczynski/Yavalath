@@ -18,7 +18,7 @@
     <myDiv id = "text1" > The game is over</myDiv>
     <myDiv id = "text2" > asfa</myDiv>
 
-    <p id="demo" onclick="reset()">Reset</p>
+    <button onclick="resetGame()">Reset</button>
 
   
     <script>
@@ -62,7 +62,7 @@
             }
         });
 
-        function reset() {
+        function resetGame() {
             socket.emit('reset', {username : username, id : id});
         }
     </script>
