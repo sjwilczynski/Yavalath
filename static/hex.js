@@ -120,15 +120,6 @@ HexagonGrid.prototype.drawHex = function(coord, fillColor, debugText, isDebug) {
     var x0 = coord.pixels.x;
     var y0 = coord.pixels.y;
     console.log("funkcja drawHex z parametrami:",coord.coordinates.x,coord.coordinates.y,fillColor,isDebug);
-    if(isDebug){
-        this.context.beginPath();
-        //this.context.closePath(); polacz z punktem poczatkowym sciezki
-        this.context.arc(x0, y0, 2, 0, 2 * Math.PI, false);
-        this.context.fillStyle = 'black';
-        this.context.fill();
-        this.context.strokeStyle = '#003300'; //color in rgb
-        this.context.stroke();
-    }
     this.context.strokeStyle = "#000";
     var angle = Math.PI / 6;
     this.context.beginPath(); //bez beginPath zamalowywal na niebiesko takze ostatni narysowany - glupie
@@ -142,6 +133,15 @@ HexagonGrid.prototype.drawHex = function(coord, fillColor, debugText, isDebug) {
     this.context.fill(); //wypelnianie kolorem
 
     this.context.stroke(); //faktyczne rysowanie
+    if(isDebug){
+        this.context.beginPath();
+        //this.context.closePath(); polacz z punktem poczatkowym sciezki
+        this.context.arc(x0, y0, 2, 0, 2 * Math.PI, false);
+        this.context.fillStyle = 'black';
+        this.context.fill();
+        this.context.strokeStyle = '#003300'; //color in rgb
+        this.context.stroke();
+    }
 
     if(isDebug){
         if (debugText) {

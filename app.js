@@ -59,6 +59,18 @@ function findGameNo(login)
     return -1;
 }
 */
+function findUserBySocketId(gamestate, id){
+    if(gamestate.user0){
+        if(gamestate.user0.socket.id == id){
+           return 0;
+        }
+    }
+    if(gamestate.user1){
+        if(gamestate.user1.socket.id == id){
+            return 1;
+        }
+    }
+}
 function findGameNo(login)
 {
     for(var i = 0; i < AllGameStates.length; i++){
@@ -87,12 +99,13 @@ function resetGame(id)
 function exitRoom(username, id)
 {
     resetGame(id);
-    if(AllGameStates[id].user1.login == username)
+    if(AllGameStates[id].user1 && AllGameStates[id].user1.login == username){
         AllGameStates[id].user1 = undefined;
-    else
+    }
+
+    if(AllGameStates[id].user0 && AllGameStates[id].user0.login == username)
         AllGameStates[id].user0 = undefined;
     AllGameStates[id].areTwoPlayers = 0;
-    
 }
 
 
@@ -349,17 +362,20 @@ io.on('connection', function(socket) {
         console.log('Disconnect!');
         var username = socketList[socket.id];
         var id = findGameNo(username);
-        if(id != -1 && AllGameStates[id].areTwoPlayers)
+        if(id != -1)
         {
-            var userNo;
-            if(AllGameStates[id].user0.socket.id == socket.id)
-                userNo = 0;
-            else
-                userNo = 1;
-            var opSocket = AllGameStates[id]['user' + (userNo ^ 1)].socket;
-            
+            /*
+                if(AllGameStates[id].user0.socket.id == socket.id)
+                    userNo = 0;
+                else
+                    userNo = 1;
+            */
             delete socketList[socket.id];
-            opSocket.emit('user disconnected');
+            if(AllGameStates[id].areTwoPlayers){
+                var userNo = findUserBySocketId(AllGameStates[id], socket.id);
+                var opSocket = AllGameStates[id]['user' + (userNo ^ 1)].socket;
+                opSocket.emit('user disconnected');
+            }
             exitRoom(username, id);
         }
         //else - nie byłeś w żadnym pokoju - nikogo nie obchodzi że się rozłączyłeś (ten przypadek jest możliwy?)
