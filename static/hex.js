@@ -114,6 +114,9 @@ HexagonGrid.prototype.drawHexGrid = function (isDebug) {
 
 HexagonGrid.prototype.drawHex = function(coord, fillColor, debugText, isDebug) { 
 
+    if(!fillColor){
+        fillColor = "white";
+    }
     var x0 = coord.pixels.x;
     var y0 = coord.pixels.y;
     console.log("funkcja drawHex z parametrami:",coord.coordinates.x,coord.coordinates.y,fillColor,isDebug);
@@ -135,10 +138,8 @@ HexagonGrid.prototype.drawHex = function(coord, fillColor, debugText, isDebug) {
         this.context.lineTo (x0 + this.radius * Math.cos(i * 2 * angle + angle), y0 + this.radius * Math.sin(i * 2 * angle + angle));
     }
  
-    if (fillColor) {
-        this.context.fillStyle = fillColor;
-        this.context.fill(); //wypelnianie kolorem
-    }
+    this.context.fillStyle = fillColor;
+    this.context.fill(); //wypelnianie kolorem
 
     this.context.stroke(); //faktyczne rysowanie
 

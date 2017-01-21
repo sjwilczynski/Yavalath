@@ -18,7 +18,8 @@
     <myDiv id = "text1" > The game is over</myDiv>
     <myDiv id = "text2" > asfa</myDiv>
 
-    <button onclick="resetGame()">Reset</button>
+    <button id = "reset" onclick="resetGame()">Reset</button>
+    <button id = "quit" onclick="goToRooms()">Quit</button>
 
   
     <script>
@@ -42,12 +43,16 @@
             document.getElementById('text2').style.display = "block";
             document.getElementById('text2').innerHTML = "The result is draw";
         });
-
-        /*
-        socket.on('debug', function(data){
-            console.log(data.info);
+        socket.on('user disconnected', function(){
+            document.getElementById('HexCanvas').style.display = "none";
+            document.getElementById('reset').style.display = "none";
+            document.getElementById('text1').style.display = "block";
+            document.getElementById('text2').style.display = "block";
+            document.getElementById('text2').innerHTML = "Your opponent has left the game"; 
         });
-        */
+        socket.on('reset',function(){
+            hexagonGrid.drawHexGrid(true);
+        });
         
         var hexagonGrid = new HexagonGrid("HexCanvas",username, id, socket, 38);
         hexagonGrid.drawHexGrid(true);
@@ -64,6 +69,10 @@
 
         function resetGame() {
             socket.emit('reset', {username : username, id : id});
+            hexagonGrid.drawHexGrid(true);
+        }
+        function goToRooms(){
+            window.location.href = "/rooms"
         }
     </script>
 
