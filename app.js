@@ -14,7 +14,9 @@ app.use(express.static(path.join(__dirname, 'static')));
 app.set('view engine', 'ejs');
 app.set('views', './views');
 		
-
+var pgp = require('pg-promise')()
+var cn = "postgres://postgres:oczko@localhost:5432/postgres"
+var db = pgp(process.env.DATABASE_URL || cn)
 
 function User(login, color, socket) {
     this.login = login;
