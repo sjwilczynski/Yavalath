@@ -15,7 +15,7 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 		
 var pgp = require('pg-promise')()
-var cn = "postgres://postgres:oczko@localhost:5432/postgres"
+var cn = "postgres://postgres:oczko@localhost:5430/postgres"
 var db = pgp(process.env.DATABASE_URL || cn)
 
 function User(login, color, socket) {
