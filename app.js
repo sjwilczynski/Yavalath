@@ -34,11 +34,13 @@ function hsh(x, y)
 
 function verifyPwd(pw1, pw2)
 {
+    console.log(pw1, pw2, pw1 == pw2, pw1.length);
     if(pw1 != pw2)
-        return -2;
+        return -1;
     //oganiczenia na hasło ???
     if(pw1.length < 3)
-        return -1;
+        return -2;
+    return 1;
 }
 
 var socketList = {}; // socket.id - key | username - value
@@ -259,7 +261,7 @@ app.post('/rooms',(req,res) =>{
 app.post('/login',(req,res) =>{
     var username = req.body.username;
     var passwd = req.body.pwd;
-    var passwd2 = req.body.pwd;
+    var passwd2 = req.body.pwd2;
     if(verifyPwd(passwd, passwd2) == 1) /* &&  username jest wolny (baza danych)){
         //weryfikacja danych z baza
         //można od razu zrobić post z login hasło z rejestrowania???        
@@ -273,6 +275,10 @@ app.post('/login',(req,res) =>{
         if(verifyPwd(passwd, passwd2) == -2)
             res.render('login',{ message : "Hasło jest niepoprawne" })
     }
+});
+
+app.post('/register',(req,res) =>{
+    res.render('register', {message : "hello"});
 });
 
 app.get('/register', authorize, (req,res) =>{

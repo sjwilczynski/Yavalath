@@ -38,6 +38,7 @@
     </style>
 </head>
 <body>
+    <div>
     <form method="POST" action = "/rooms">
     <div id='login'>
         <div>
@@ -54,6 +55,8 @@
         <div>
             <button>Zaloguj</button>
         </div>
+        <div>
+        </div>
         <% if ( locals.message ) { %>
             <div class='message'>
                 <%= locals.message %>
@@ -61,15 +64,12 @@
         <% } %>
     </div>
     </form>
-    <form method="POST" action = "/register">
-    <div id='login'>
-        <div>
-        Rejestracja
-        </div>
-        <div>
-            <button>Zarejestruj się</button>
-        </div>
     </div>
+    <div>
+    <form action="/register" method="POST">
+        <button name="rej" value="rejestruj">Zarejestruj się</button>
     </form>
+    </div>
+    
 </body>
 </html>
