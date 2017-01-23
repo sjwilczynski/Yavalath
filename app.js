@@ -271,9 +271,9 @@ app.post('/login',(req,res) =>{
     }
     else{
         if(verifyPwd(passwd, passwd2) == -1)
-            res.render('login',{ message : "Hasła nie zgadzają się" })
+            res.render('register',{ message : "Hasła nie zgadzają się" })
         if(verifyPwd(passwd, passwd2) == -2)
-            res.render('login',{ message : "Hasło jest niepoprawne" })
+            res.render('register',{ message : "Hasło jest niepoprawne" })
     }
 });
 
