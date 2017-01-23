@@ -32,6 +32,15 @@ function hsh(x, y)
     return x + 9 * y;
 }
 
+function verifyPwd(pw1, pw2)
+{
+    if(pw1 != pw2)
+        return -2;
+    //oganiczenia na hasło ???
+    if(pw1.length < 3)
+        return -1;
+}
+
 var socketList = {}; // socket.id - key | username - value
 
 var N = 80; // coord = x + 9 * y 
@@ -245,6 +254,29 @@ app.post('/rooms',(req,res) =>{
     else{
         res.render('login',{ message : "Zły login lub hasło" })
     }
+});
+
+app.post('/login',(req,res) =>{
+    var username = req.body.username;
+    var passwd = req.body.pwd;
+    var passwd2 = req.body.pwd;
+    if(verifyPwd(passwd, passwd2) == 1) /* &&  username jest wolny (baza danych)){
+        //weryfikacja danych z baza
+        //można od razu zrobić post z login hasło z rejestrowania???        
+    } 
+*/  {
+        res.render('login', {message : "do zrobienia rejestrowanie do bazy"});
+    }
+    else{
+        if(verifyPwd(passwd, passwd2) == -1)
+            res.render('login',{ message : "Hasła nie zgadzają się" })
+        if(verifyPwd(passwd, passwd2) == -2)
+            res.render('login',{ message : "Hasło jest niepoprawne" })
+    }
+});
+
+app.get('/register', authorize, (req,res) =>{
+    res.render('register', {});
 });
 
 app.get('/rooms', authorize, (req,res) =>{

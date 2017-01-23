@@ -38,37 +38,31 @@
     </style>
 </head>
 <body>
-    <form method="POST" action = "/rooms">
+    <form method="POST" action = "/login">
     <div id='login'>
         <div>
-        Logowanie
+        Rejestracja
         </div>
         <div>
-        <input type='text' name='username' />
         <label>Nazwa użytkownika:</label>
+        <input type='text' name='username' />
         </div>
         <div>
         <input type='password' name='pwd' />
         <label>Hasło:</label>
         </div>
         <div>
-            <button>Zaloguj</button>
+        <input type='password' name='pwd2' />
+        <label>Powtórz Hasło:</label>
+        </div>
+        <div>
+            <button>Zarejestruj</button>
         </div>
         <% if ( locals.message ) { %>
             <div class='message'>
                 <%= locals.message %>
             </div>
         <% } %>
-    </div>
-    </form>
-    <form method="POST" action = "/register">
-    <div id='login'>
-        <div>
-        Rejestracja
-        </div>
-        <div>
-            <button>Zarejestruj się</button>
-        </div>
     </div>
     </form>
 </body>
