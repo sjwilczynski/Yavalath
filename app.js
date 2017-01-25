@@ -32,13 +32,21 @@ function hsh(x, y)
     return x + 9 * y;
 }
 
-function verifyPwd(pw1, pw2)
+function verifyData(username,password, confirmedPassword)
 {
-    console.log(pw1, pw2, pw1 == pw2, pw1.length);
-    if(pw1 != pw2)
+    console.log(password, confirmedPassword, password == confirmedPassword, password.length);
+    db.query("select * from users where username = $1",[username])
+    .then(data =>{
+        if(data.length > 0){
+            return 0;
+        }
+    })
+    .catch(err =>{
+        return 2;
+    });
+    if(password != confirmedPassword)
         return -1;
-    //oganiczenia na hasło ???
-    if(pw1.length < 3)
+    if(password.length < 3 || username.length < 3)
         return -2;
     return 1;
 }
@@ -237,7 +245,7 @@ app.get('/login', (req,res) =>{
 app.post('/rooms', (req,res) =>{
     var username = req.body.username;
     var password = req.body.pwd;
-    db.query('select * from users where name = ($1)',[username])
+    db.query('select * from users where name = $1',[username])
     .then( userdata => {
         console.log(userdata);
         if( userdata.length > 0){
@@ -254,7 +262,7 @@ app.post('/rooms', (req,res) =>{
         }
     	})
     	.catch( err => {
-        	 res.render('login',{ message : "Coś poszło nie tak - spróbuj jeszcze raz\n" + err.toString() + " " + process.env.DATABASE_URL });
+        	 res.render('login',{ message : "Coś poszło nie tak - spróbuj jeszcze raz"});
     	});		
 });
 
@@ -262,19 +270,35 @@ app.post('/login',(req,res) =>{
     var username = req.body.username;
     var passwd = req.body.pwd;
     var passwd2 = req.body.pwd2;
-    if(verifyPwd(passwd, passwd2) == 1) /* &&  username jest wolny (baza danych)){
-        //weryfikacja danych z baza
-        //można od razu zrobić post z login hasło z rejestrowania???        
-    } 
-*/  {
-        res.render('login', {message : "do zrobienia rejestrowanie do bazy"});
-    }
-    else{
-        if(verifyPwd(passwd, passwd2) == -1)
-            res.render('register',{ message : "Hasła nie zgadzają się" })
-        if(verifyPwd(passwd, passwd2) == -2)
-            res.render('register',{ message : "Hasło jest niepoprawne - za krótkie" })
-    }
+    var verify = verifyData(username, passwd, passwd2)
+    console.log(verify);
+    switch (verify){
+        case 1:
+            console.log('1');
+            db.query("INSERT INTO users VALUES ($1,$2)",[username,passwd])
+            .then( _ => {
+                res.render('login', {message : "Zostałeś zarejestrowany"});
+            })
+            .catch( err => {
+                res.render('register',{ message : "Coś poszło nie tak - spróbuj jeszcze raz" + err.toString()});
+            })       
+            break;
+        case -1:
+            console.log('-1');
+            res.render('register',{ message : "Hasła nie zgadzają się" });
+            break;
+        case -2:
+            console.log('-2');
+            res.render('register',{ message : "Hasło jest niepoprawne - za krótkie" });
+            break;
+        case 0:
+            console.log('0');
+            res.render('register',{ message : "Podana nazwa użytkownika jest zajęta" });
+            break;
+        case 2:
+            console.log('2');
+            res.render('register',{ message : "Coś poszło nie tak - spróbuj jeszcze raz"});
+    }   
 });
 
 app.post('/register',(req,res) =>{
