@@ -34,21 +34,31 @@ function hsh(x, y)
 
 function verifyData(username,password, confirmedPassword)
 {
+    
     console.log(password, confirmedPassword, password == confirmedPassword, password.length);
-    db.query("select * from users where username = $1",[username])
+    var problem = db.query("select * from users where name = $1",[username])
     .then(data =>{
         if(data.length > 0){
             return 0;
         }
+        return -1;
     })
     .catch(err =>{
+        console.log(err);
         return 2;
     });
-    if(password != confirmedPassword)
-        return -1;
-    if(password.length < 3 || username.length < 3)
-        return -2;
-    return 1;
+
+    return problem.then(result => {
+        if(result != -1){
+            return problem;
+        }
+        if(password != confirmedPassword)
+            return -1;
+        if(password.length < 3 || username.length < 3)
+            return -2;
+        return 1;
+    })
+    
 }
 
 var socketList = {}; // socket.id - key | username - value
@@ -271,34 +281,39 @@ app.post('/login',(req,res) =>{
     var passwd = req.body.pwd;
     var passwd2 = req.body.pwd2;
     var verify = verifyData(username, passwd, passwd2)
-    console.log(verify);
-    switch (verify){
-        case 1:
-            console.log('1');
-            db.query("INSERT INTO users VALUES ($1,$2)",[username,passwd])
-            .then( _ => {
-                res.render('login', {message : "Zostałeś zarejestrowany"});
-            })
-            .catch( err => {
-                res.render('register',{ message : "Coś poszło nie tak - spróbuj jeszcze raz" + err.toString()});
-            })       
-            break;
-        case -1:
-            console.log('-1');
-            res.render('register',{ message : "Hasła nie zgadzają się" });
-            break;
-        case -2:
-            console.log('-2');
-            res.render('register',{ message : "Hasło jest niepoprawne - za krótkie" });
-            break;
-        case 0:
-            console.log('0');
-            res.render('register',{ message : "Podana nazwa użytkownika jest zajęta" });
-            break;
-        case 2:
-            console.log('2');
-            res.render('register',{ message : "Coś poszło nie tak - spróbuj jeszcze raz"});
-    }   
+    //console.log(verify);
+    verify.then( ver => {
+        switch (ver){
+            case 1:
+                console.log('1');
+                db.query("INSERT INTO users VALUES ($1,$2)",[username,passwd])
+                .then( _ => {
+                    res.render('login', {message : "Zostałeś zarejestrowany"});
+                })
+                .catch( err => {
+                    res.render('register',{ message : "Coś poszło nie tak - spróbuj jeszcze raz" + err.toString()});
+                })       
+                break;
+            case -1:
+                console.log('-1');
+                res.render('register',{ message : "Hasła nie zgadzają się" });
+                break;
+            case -2:
+                console.log('-2');
+                res.render('register',{ message : "Hasło lub login są niepoprawne - za krótkie" });
+                break;
+            case 0:
+                console.log('0');
+                res.render('register',{ message : "Podana nazwa użytkownika jest zajęta" });
+                break;
+            case 2:
+                console.log('2');
+                res.render('register',{ message : "Coś poszło nie tak - spróbuj jeszcze raz"});
+        }   
+    })
+    verify.catch( err => {
+        res.render('register',{ message : "Coś poszło nie tak - spróbuj jeszcze raz"});
+    })
 });
 
 app.post('/register',(req,res) =>{
