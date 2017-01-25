@@ -9,7 +9,7 @@
         overflow: hidden;
     }
 
-    form {
+    #form1 {
         display         : flex;
         justify-content : center;
         align-items     : center;        
@@ -39,36 +39,37 @@
 </head>
 <body>
     <div>
-    <form method="POST" action = "/rooms">
-    <div id='login'>
+        <form id = 'form1' method="POST" action = "/rooms">
+        <div id='login'>
+            <div>
+                Logowanie
+            </div>
+            <div>
+                <input type='text' name='username' />
+                <label>Nazwa użytkownika:</label>
+            </div>
+            <div>
+                <input type='password' name='pwd' />
+                <label>Hasło:</label>
+            </div>
+            <div>
+                <button>Zaloguj</button>
+            </div>
         <div>
-        Logowanie
-        </div>
-        <div>
-        <input type='text' name='username' />
-        <label>Nazwa użytkownika:</label>
-        </div>
-        <div>
-        <input type='password' name='pwd' />
-        <label>Hasło:</label>
-        </div>
-        <div>
-            <button>Zaloguj</button>
-        </div>
-        <div>
-        </div>
-        <% if ( locals.message ) { %>
+            <% if ( locals.message ) { %>
             <div class='message'>
                 <%= locals.message %>
             </div>
-        <% } %>
-    </div>
-    </form>
+            <% } %>
+        </div>
+        </form>
+        <div>
+            <form action="/register" method="POST">
+                <button>Zarejestruj się</button>
+            </form>
+        </div>
     </div>
     <div>
-    <form action="/register" method="POST">
-        <button name="rej" value="rejestruj">Zarejestruj się</button>
-    </form>
     </div>
     
 </body>

@@ -62,16 +62,6 @@ function Gamestate(id){
     this.areTwoPlayers = 0;
 }
 
-/*
-function findGameNo(login)
-{
-    for(var i = 0; i < AllGameStates.length; i++)
-        if(AllGameStates[i].areTwoPlayers && 
-            (AllGameStates[i].user0.login == login || AllGameStates[i].user1.login == login))
-            return i;
-    return -1;
-}
-*/
 function findUserBySocketId(gamestate, id){
     if(gamestate.user0){
         if(gamestate.user0.socket.id == id){
@@ -244,18 +234,28 @@ app.get('/login', (req,res) =>{
     res.render('login');
 })
 
-app.post('/rooms',(req,res) =>{
+app.post('/rooms', async (req,res) =>{
     var username = req.body.username;
-    var passwd = req.body.pwd;
-    if(username != ''){
-        //weryfikacja danych z baza
-         // TODO baza danych
-        res.cookie('username', req.body.username, {signed : true});
-        res.render('rooms',{AllGameStates : AllGameStates, username : req.signedCookies.username})
-    } 
-    else{
-        res.render('login',{ message : "Zły login lub hasło" })
-    }
+    var password = req.body.pwd;
+    try {
+			var userdata = await db.query('select * from users where name = ($1)',[username]);
+            console.log(userdata)
+            if( userdata.length > 0){
+                extractedUsername = userdata[0].name;
+                extractedPassword = userdata[0].password;
+                if(username == extractedUsername && password == extractedPassword){
+                    res.cookie('username', username, {signed : true});
+                    res.render('rooms',{AllGameStates : AllGameStates, username : username});  
+                } else{
+                    res.render('login',{ message : "Zły login lub hasło" });
+                }
+            } else{
+                res.render('login',{ message : "Zły login lub hasło" });
+            }
+		}
+		catch ( err ) {
+			res.render('login',{ message : "Coś poszło nie tak - spróbuj jeszcze raz" });
+		}
 });
 
 app.post('/login',(req,res) =>{
@@ -273,7 +273,7 @@ app.post('/login',(req,res) =>{
         if(verifyPwd(passwd, passwd2) == -1)
             res.render('register',{ message : "Hasła nie zgadzają się" })
         if(verifyPwd(passwd, passwd2) == -2)
-            res.render('register',{ message : "Hasło jest niepoprawne" })
+            res.render('register',{ message : "Hasło jest niepoprawne - za krótkie" })
     }
 });
 
@@ -282,26 +282,27 @@ app.post('/register',(req,res) =>{
 });
 
 app.get('/register', authorize, (req,res) =>{
-    res.render('register', {});
+    res.render('register');
 });
 
 app.get('/rooms', authorize, (req,res) =>{
     res.render('rooms', {AllGameStates : AllGameStates, username : req.signedCookies.username});
 });
 
-//app.get('/game/:id', authorize, (req,res) =>{ dlaczego jak przesylam url w ten sposob to nie widzi mi folderu static -> traktuje hex.js jako pojscie na /game/hex.js
 app.get('/game:id', authorize, (req,res) =>{
-    //console.log(req.url);
     var id = req.params.id;
-    //sprawdzanie czy jest wolne miejsce i czy jestem pierwszy ktory wchodzi na gierke
-    //czy drugi -> wtedy trzeba wyslac jakies zdarzenie do goscia !!
-    // MOZE TU WYSTARCZY ZROBIC GAME RESTART -> W ZALEZNOSCI CZY JUZ KTOS JEST CZY NIE
     console.log("request na game z parametrami:",id, req.signedCookies.username)
     res.render('hexagon', {id:id, username : req.signedCookies.username});
 });
 
+app.get('/logout', authorize, (req,res) =>{
+    res.cookie('username', '', {signed : true, maxAge : -1});
+    res.contentType('text/html');
+    res.write('Wylogowano');
+    res.end();
+});
 
-// middleware autentykacji
+
 function authorize(req, res, next) {
     if ( req.signedCookies.username != undefined ) {
         next();
