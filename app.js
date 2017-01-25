@@ -233,7 +233,7 @@ app.get('/', function(req, res) {
 app.get('/login', (req,res) =>{
     res.render('login');
 })
-/*
+
 app.post('/rooms', async (req,res) =>{
     var username = req.body.username;
     var password = req.body.pwd;
@@ -257,7 +257,7 @@ app.post('/rooms', async (req,res) =>{
 			res.render('login',{ message : "Coś poszło nie tak - spróbuj jeszcze raz" });
 		}
 });
-*/
+
 
 app.post('/login',(req,res) =>{
     var username = req.body.username;
