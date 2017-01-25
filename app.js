@@ -234,30 +234,29 @@ app.get('/login', (req,res) =>{
     res.render('login');
 })
 
-app.post('/rooms', async (req,res) =>{
+app.post('/rooms', (req,res) =>{
     var username = req.body.username;
     var password = req.body.pwd;
-    try {
-			var userdata = await db.query('select * from users where name = ($1)',[username]);
-            console.log(userdata)
-            if( userdata.length > 0){
-                extractedUsername = userdata[0].name;
-                extractedPassword = userdata[0].password;
-                if(username == extractedUsername && password == extractedPassword){
-                    res.cookie('username', username, {signed : true});
-                    res.render('rooms',{AllGameStates : AllGameStates, username : username});  
-                } else{
-                    res.render('login',{ message : "Zły login lub hasło" });
-                }
+    db.query('select * from users where name = ($1)',[username])
+    .then( userdata => {
+        console.log(userdata);
+        if( userdata.length > 0){
+            extractedUsername = userdata[0].name;
+            extractedPassword = userdata[0].password;
+            if(username == extractedUsername && password == extractedPassword){
+                res.cookie('username', username, {signed : true});
+                res.render('rooms',{AllGameStates : AllGameStates, username : username});  
             } else{
                 res.render('login',{ message : "Zły login lub hasło" });
             }
-		}
-		catch ( err ) {
-			res.render('login',{ message : "Coś poszło nie tak - spróbuj jeszcze raz" });
-		}
+        } else{
+            res.render('login',{ message : "Zły login lub hasło" });
+        }
+    	})
+    	.catch( err => {
+        	 res.render('login',{ message : "Coś poszło nie tak - spróbuj jeszcze raz" });
+    	});		
 });
-
 
 app.post('/login',(req,res) =>{
     var username = req.body.username;
