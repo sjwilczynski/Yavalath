@@ -334,6 +334,17 @@ app.get('/game:id', authorize, (req,res) =>{
     res.render('hexagon', {id:id, username : req.signedCookies.username});
 });
 
+app.get('/results', authorize, (req,res) =>{
+    db.query('select * from history where user1 = $1 or user2 = $1',[req.signedCookies.username])
+    .then( data =>{
+        res.render('results', { history : data });
+    })
+    .catch( err => {
+        res.render('results', { message : "Coś poszło nie tak - spróbuj jeszcze raz" });
+    });
+    
+});
+
 app.get('/logout', authorize, (req,res) =>{
     res.cookie('username', '', {signed : true, maxAge : -1});
     res.contentType('text/html');

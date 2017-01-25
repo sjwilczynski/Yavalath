@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+    <body>
+        <% if( locals.history.length > 0 ){ %> 
+        <table>
+            <tr>
+                <th>Gracz1</th><th>Gracz2</th><th>Data</th><th>Zwycięzca</th>
+            </tr>
+
+            <% for(var i = 0; i < locals.history.length; i++) { %>
+                <tr>
+                    <td><%= locals.history[i].user1 %></td>
+                    <td><%= locals.history[i].user2 %></td>
+                    <td><%= locals.history[i].data.toString().substring(0,25) %></td>
+                    <td><%= locals.history[i].winner %></td>
+                </tr>    
+            <% } %>
+        </table>
+        <% }  else {%>
+        <div>
+            Nie masz jeszcze żadnych rozegranych gier :(
+        </div>
+        <% } %>
+        <div>
+            <form method="GET" action = '/rooms' >
+                <div>
+                    <button>Wróć do menu pokoi</button>
+                </div>
+            </form>
+        </div>
+        <div>
+            <% if ( locals.message ) { %>
+            <div class='message'>
+                <%= locals.message %>
+            </div>
+            <% } %>
+        </div>
+</body>
+</html>	
+
