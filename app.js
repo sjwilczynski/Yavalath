@@ -254,7 +254,7 @@ app.post('/rooms', (req,res) =>{
         }
     	})
     	.catch( err => {
-        	 res.render('login',{ message : "Coś poszło nie tak - spróbuj jeszcze raz" });
+        	 res.render('login',{ message : "Coś poszło nie tak - spróbuj jeszcze raz\n" + err.toString() });
     	});		
 });
 
