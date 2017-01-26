@@ -357,15 +357,10 @@ function authorize(req, res, next) {
     if ( req.signedCookies.username != undefined ) {
         next();
     } else {
+        console.log('nie bylo ciacha');
         res.redirect('/login');
     }
 }
-
-app.use((req,res)=>{
-    res.cookie('username', '', {signed : true, maxAge : -1});
-    res.render('404',{url : req.url})
-})
-
 
 
 server.listen( process.env.PORT || 3000 );
