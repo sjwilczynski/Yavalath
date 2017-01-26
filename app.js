@@ -187,9 +187,9 @@ function verify(x, y, gamestate)
         else
         {
             color = gamestate.board[hsh(x, i)];
-            cnt = 1;
             if(cnt == 3)
                 threeInRow = true;
+            cnt = 1;
         }
         if(cnt == 4)
             fourInRow = true;
@@ -215,9 +215,9 @@ function verify(x, y, gamestate)
         else
         {
             color = gamestate.board[hsh(x + i, y + i)];
-            cnt = 1;
             if(cnt == 3)
                 threeInRow = true;
+            cnt = 1;
         }
         if(cnt == 4)
             fourInRow = true;
