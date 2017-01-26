@@ -361,12 +361,11 @@ function authorize(req, res, next) {
     }
 }
 
-/*
 app.use((req,res)=>{
-    //res.cookie('foo', '', { maxAge : -1 } ); 
+    res.cookie('username', '', {signed : true, maxAge : -1});
     res.render('404',{url : req.url})
 })
-*/
+
 
 
 server.listen( process.env.PORT || 3000 );
@@ -415,19 +414,35 @@ io.on('connection', function(socket) {
                     gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
                 }
                 if(isEnded == 0){
+                    db.query("INSERT INTO history(user1, user2, winner) VALUES ($1,$2,$3)",
+                    [ gamestate.user0.login, gamestate.user1.login, gamestate.user0.login])
+                    .catch(err =>{
+                        console.log("Problem przy zapisie wyniku do bazy")
+                    });
                     socket.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
                     opSocket.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
                     gamestate.isOver = 1;
                 }
                 if(isEnded == 1){
+                    db.query("INSERT INTO history(user1, user2, winner) VALUES ($1,$2,$3)",
+                    [ gamestate.user0.login, gamestate.user1.login, gamestate.user1.login])
+                    .catch(err =>{
+                        console.log("Problem przy zapisie wyniku do bazy")
+                    });
                     socket.emit('endGame', {winner : gamestate.user1.login, looser : gamestate.user0.login});
                     opSocket.emit('endGame', {winner : gamestate.user1.login, looser : gamestate.user0.login});
                     gamestate.isOver = 1;
                 }
                 if(isEnded == 2){
+                    db.query("INSERT INTO history(user1, user2, winner) VALUES ($1,$2,$3)",
+                    [ gamestate.user0.login, gamestate.user1.login, 'draw'])
+                    .catch(err =>{
+                        console.log("Problem przy zapisie wyniku do bazy")
+                    });
                     socket.emit('draw', {});
                     opSocket.emit('draw', {});
-                } //przypadek kiedy wypełni się całą planszę a nikt nie wygrał lub ktoś zrobił 3 + 4
+                    gamestate.isOver = 1;
+                }
             }
             else{
                 socket.emit('response', {isValid : false});
@@ -455,21 +470,21 @@ io.on('connection', function(socket) {
         var id = findGameNo(username);
         if(id != -1)
         {
-            /*
-                if(AllGameStates[id].user0.socket.id == socket.id)
-                    userNo = 0;
-                else
-                    userNo = 1;
-            */
             delete socketList[socket.id];
             if(AllGameStates[id].areTwoPlayers){
                 var userNo = findUserBySocketId(AllGameStates[id], socket.id);
                 var opSocket = AllGameStates[id]['user' + (userNo ^ 1)].socket;
                 opSocket.emit('user disconnected');
+                if(!AllGameStates[id].isOver){
+                    db.query("INSERT INTO history(user1, user2, winner) VALUES ($1,$2,$3)",
+                    [ AllGameStates[id]['user' + userNo].login, AllGameStates[id]['user' + (userNo ^ 1)].login, AllGameStates[id]['user' + (userNo ^ 1)].login])
+                    .catch(err =>{
+                        console.log("Problem przy zapisie wyniku do bazy")
+                    });
+                }
             }
             exitRoom(username, id);
         }
-        //else - nie byłeś w żadnym pokoju - nikogo nie obchodzi że się rozłączyłeś (ten przypadek jest możliwy?)
     });
 });
 
