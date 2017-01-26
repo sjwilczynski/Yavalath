@@ -487,22 +487,11 @@ console.log( 'server listens' );
 
 
 /*
-1.tablica gamestate, gamestate zawiera sockety    STACHU -> DONE
-2.ciasteczka jak w zad7.js z username -> pozwala to wchodzic na wszytskie linki, middleware autentykacji STACHU -> DONE
-3.przerobienie flow z linka na link (gety posty po stronie serwera) STACHU -> DONE
-4.przycisk logout na rooms.ejs i po stronie serwera i 404 STACHU
-5.restart i quit game( musza wysylac jakies zdarzenia na socket, mysle ze restart bedzie wystarczajaco spoko 
-jak bedzie go mozna zrobic tylko po zakonczeniu gry, za to quit zawsze) KUBA/ STachu DOne
-6. resetowanie stanu gry po stronie serwera KUBA/ Stachu DONE
-7. zdarzenie disconnect KUBA/ STACHU DONE
-8.rooms.ejs - potrzebny szablon na gamestate( 3 wiersze - user1, user2, przycisk dolacz do gry) - musza byc inde
-ksowane zeby wysylac na odpowiednie linki - KUBA DONE
-9. rejestrowanie nowych uzytkownikow - na stronie login powinien byc przycisk - zarejestruj sie:
-sprawdza czy w bazie nie ma uzytkownika o tym nicku i jesli nie to aktualizuje baze i przekierowuje na ekran logowania STACHU
-?10.Baza danych1 - tabelka (id,username,passwd) - oprogramowanie rejestracji i weryfikacji hasla po stronie serwera
-?11.Baza danych2 - tabelka (id, Winner, Looser, Date) - na rooms pod spodem przycisk pokaz statystyki 
-po kazdej zakonczonej grze zapisywanie do statystyk
-?12. CSS zeby bylo pieknie
+
+
+12. CSS zeby bylo pieknie
+13. Gracz moze byc zalogowany 2 razy
+14. komunikat dla goscia ze wszedl do niego drugi gracz
 */
 
 
@@ -511,6 +500,5 @@ po kazdej zakonczonej grze zapisywanie do statystyk
 Problem:
 request na url wykonuje sie przed disconnectem wiec na rooms widzi sie stan gry jakby sie bylo w tej z ktorej sie wyszlo
 glupie rozwiazanie: dodac sztuczny url przed getem na rooms
-
 
 */
