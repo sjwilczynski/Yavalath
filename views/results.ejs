@@ -28,6 +28,13 @@
             </form>
         </div>
         <div>
+        <form method="GET" action = '/logout' >
+            <div>
+                <button>Wyloguj się</button>
+            </div>
+        </form>
+        </div>
+        <div>
             <% if ( locals.message ) { %>
             <div class='message'>
                 <%= locals.message %>
