@@ -63,7 +63,7 @@ function verifyData(username,password, confirmedPassword)
 
 var socketList = {}; // socket.id - key | username - value
 
-var N = 80; // coord = x + 9 * y 
+var N = 81; // coord = x + 9 * y 
 
 var AllGameStates = [];
 for(var i = 0; i < 10; i++){
