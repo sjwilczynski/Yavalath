@@ -60,7 +60,7 @@
             info.innerHTML = 'Teraz kolej gracza ' + data.user; 
             document.getElementById('text1').style.display = "none";
             document.getElementById('text2').style.display = "none";
-            hexagonGrid.drawHexGrid(true);
+            hexagonGrid.drawHexGrid(false);
         });
         
         socket.on('response', function( data ){
