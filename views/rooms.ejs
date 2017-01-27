@@ -1,8 +1,11 @@
 <!DOCTYPE html>
+    <head>
+        <title> Pokoje </title>
+    </head>
     <body>
         <table>
             <tr>
-                <th>RoomID</th><th>Player1</th><th>Player2</th><th>Dołącz</th>
+                <th>Numer pokoju</th><th>Gracz1</th><th>Gracz2</th><th>Dołącz</th>
             </tr>
 
             <% for(var i = 0; i < locals.AllGameStates.length; i++) { %>
@@ -46,6 +49,13 @@
                 <button>Wyloguj się</button>
             </div>
         </form>
+        </div>
+        <div>
+            <% if ( locals.message ) { %>
+            <div class='message'>
+                <%= locals.message %>
+            </div>
+            <% } %>
         </div>
 </body>
 </html>	

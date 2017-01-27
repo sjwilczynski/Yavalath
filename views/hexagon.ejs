@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>Zapraszam do zabawy ;)</title>
     <script src="/socket.io/socket.io.js"></script>
     <script src="hex.js"></script>
 </head>
@@ -12,8 +12,9 @@
     }
 </style>
 <body>
+    
 
-
+    <div id = 'info'> </div> 
     <canvas id="HexCanvas" width="800" height="640"></canvas>
     <myDiv id = "text1" > The game is over</myDiv>
     <myDiv id = "text2" > asfa</myDiv>
@@ -23,7 +24,9 @@
 
   
     <script>
+        var info = document.getElementById('info');
         var username = "<%= username %>";
+        var opUsername;
         var id = "<%= id %>";
         var socket = io();
         socket.emit('MyConnection', {id : id, username : username});

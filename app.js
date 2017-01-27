@@ -331,7 +331,11 @@ app.get('/rooms', authorize, (req,res) =>{
 app.get('/game:id', authorize, (req,res) =>{
     var id = req.params.id;
     console.log("request na game z parametrami:",id, req.signedCookies.username)
-    res.render('hexagon', {id:id, username : req.signedCookies.username});
+    if( AllGameStates[id].areTwoPlayers ){
+        res.render('rooms', {AllGameStates : AllGameStates, username : req.signedCookies.username, message : "W tym pokoju nie ma miejsca"})
+    } else{
+        res.render('hexagon', {id:id, username : req.signedCookies.username});
+    }
 });
 
 app.get('/results', authorize, (req,res) =>{
@@ -491,7 +495,8 @@ console.log( 'server listens' );
 
 12. CSS zeby bylo pieknie
 13. Gracz moze byc zalogowany 2 razy
-14. komunikat dla goscia ze wszedl do niego drugi gracz
+14. komunikat dla goscia ze wszedl do niego drugi gracz i czyja tura
+15. nazwy kart
 */
 
 
