@@ -15,7 +15,9 @@
     
 
     <div id = 'info'> </div> 
-    <canvas id="HexCanvas" width="800" height="640"></canvas>
+    <div>
+        <canvas id="HexCanvas" width="800" height="640"></canvas>
+    </div>
     <myDiv id = "text1" > The game is over</myDiv>
     <myDiv id = "text2" > asfa</myDiv>
 
@@ -26,13 +28,11 @@
     <script>
         var info = document.getElementById('info');
         var username = "<%= username %>";
-        var opUsername;
         var id = "<%= id %>";
         var socket = io();
         socket.emit('MyConnection', {id : id, username : username});
         socket.on('endGame',function(data){
-            //TO DO jakie przyciski na dole strony i moze komunikat :)
-            //console.log('Koniec gry');
+            info.style.display = "none";
             document.getElementById('text1').style.display = "block";
             document.getElementById('text2').style.display = "block";
             if(data.winner == username){
@@ -42,47 +42,54 @@
             }
         });
         socket.on('draw', function(data) {
+            info.style.display = "none";
             document.getElementById('text1').style.display = "block";
             document.getElementById('text2').style.display = "block";
             document.getElementById('text2').innerHTML = "The result is draw";
         });
         socket.on('user disconnected', function(){
+            info.style.display = "none";
             document.getElementById('HexCanvas').style.display = "none";
             document.getElementById('reset').style.display = "none";
             document.getElementById('text1').style.display = "block";
             document.getElementById('text2').style.display = "block";
             document.getElementById('text2').innerHTML = "Your opponent has left the game"; 
         });
-        socket.on('reset',function(){
+        socket.on('reset',function(data){
+            info.style.display = "block";
+            info.innerHTML = 'Teraz kolej gracza ' + data.user; 
             document.getElementById('text1').style.display = "none";
             document.getElementById('text2').style.display = "none";
             hexagonGrid.drawHexGrid(true);
         });
         
-        var hexagonGrid = new HexagonGrid("HexCanvas",username, id, socket, 38);
-        hexagonGrid.drawHexGrid(true);
-
         socket.on('response', function( data ){
             if(data.isValid){
                 hexagonGrid.drawHex(data.hex, data.color, "", false);
+                info.innerHTML = 'Teraz kolej gracza ' + data.user; 
                 console.log(data.isValid, data.hex.coordinates.x, data.hex.coordinates.y);
             }
             else{
                 console.log('The move was invalid');
             }
         });
+        socket.on('firstPlayer', function(data){
+            info.innerHTML = 'Musisz poczekać na drugiego gracza';
+        });
+        socket.on('secondPlayer', function(data){
+            info.innerHTML = 'Teraz kolej gracza ' + data.user; 
+        });
+
 
         function resetGame() {
             socket.emit('reset', {username : username, id : id});
-            document.getElementById('text1').style.display = "none";
-            document.getElementById('text2').style.display = "none";
-            hexagonGrid.drawHexGrid(true);
         }
         function goToRooms(){
             window.location.href = "/rooms"
         }
-    </script>
 
+        var hexagonGrid = new HexagonGrid("HexCanvas",username, id, socket, 38);
+        hexagonGrid.drawHexGrid(false);
     </script>
     
 </body>

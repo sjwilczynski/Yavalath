@@ -34,8 +34,6 @@ function hsh(x, y)
 
 function verifyData(username,password, confirmedPassword)
 {
-    
-    console.log(password, confirmedPassword, password == confirmedPassword, password.length);
     var problem = db.query("select * from users where name = $1",[username])
     .then(data =>{
         if(data.length > 0){
@@ -150,7 +148,6 @@ function verify(x, y, gamestate)
         x : x,
         y : y
     };
-    //console.log(tst);
     for(var i = Math.max(0, y - 4); i <= Math.min(8, y + 4); i++)
     {
         if(gamestate.board[hsh(i, y)] >= 0 && gamestate.board[hsh(i, y)] == color)
@@ -174,7 +171,6 @@ function verify(x, y, gamestate)
             test : "fst",
             i : i
         };
-        //console.log(info);
     }
     if(cnt == 3)
         threeInRow = true;
@@ -202,7 +198,6 @@ function verify(x, y, gamestate)
             test : "nd",
             i : i
         };
-        //console.log(info);
     }
     if(cnt == 3)
         threeInRow = true;
@@ -230,7 +225,7 @@ function verify(x, y, gamestate)
             test : "rd",
             i : i
         };
-        //console.log(info);
+
     }
     if(cnt == 3)
         threeInRow = true;
@@ -281,11 +276,9 @@ app.post('/login',(req,res) =>{
     var passwd = req.body.pwd;
     var passwd2 = req.body.pwd2;
     var verify = verifyData(username, passwd, passwd2)
-    //console.log(verify);
     verify.then( ver => {
         switch (ver){
             case 1:
-                console.log('1');
                 db.query("INSERT INTO users VALUES ($1,$2)",[username,passwd])
                 .then( _ => {
                     res.render('login', {message : "Zostałeś zarejestrowany"});
@@ -295,19 +288,15 @@ app.post('/login',(req,res) =>{
                 })       
                 break;
             case -1:
-                console.log('-1');
                 res.render('register',{ message : "Hasła nie zgadzają się" });
                 break;
             case -2:
-                console.log('-2');
                 res.render('register',{ message : "Hasło lub login są niepoprawne - za krótkie" });
                 break;
             case 0:
-                console.log('0');
                 res.render('register',{ message : "Podana nazwa użytkownika jest zajęta" });
                 break;
             case 2:
-                console.log('2');
                 res.render('register',{ message : "Coś poszło nie tak - spróbuj jeszcze raz"});
         }   
     })
@@ -377,12 +366,16 @@ io.on('connection', function(socket) {
         var username = data.username;
         console.log('in MyConnection with params:',id,username);
         socketList[socket.id] = username;
-        if(AllGameStates[id].user0 == undefined){
-            AllGameStates[id].user0 = new User(username, "blue", socket);
+        gamestate = AllGameStates[id];
+        if(gamestate.user0 == undefined){
+            gamestate.user0 = new User(username, "blue", socket);
+            socket.emit('firstPlayer');
         }
-        else if(AllGameStates[id].user1 == undefined){
-            AllGameStates[id].user1 = new User(username, "red", socket);
-            AllGameStates[id].areTwoPlayers = 1;
+        else if(gamestate.user1 == undefined){
+            gamestate.user1 = new User(username, "red", socket);
+            gamestate.areTwoPlayers = 1;
+            gamestate.user0.socket.emit('secondPlayer', { user : gamestate.user0.login});
+            socket.emit('secondPlayer',{ user : gamestate.user0.login});
         } 
     })
     socket.on('move',function(data){
@@ -407,8 +400,10 @@ io.on('connection', function(socket) {
                 var isEnded = verify(x, y, gamestate); // -1 gramy dalej | 0 - user0 win | 1 - u1 w | 2 - remis
                 var opSocket = gamestate['user' + (userNo ^ 1)].socket;
                 
-                socket.emit('response', {isValid : true, hex: data.hex, color : gamestate['user' + userNo].color});
-                opSocket.emit('response', {isValid : true, hex: data.hex, color : gamestate['user' + userNo].color});
+                socket.emit('response', {isValid : true, hex: data.hex, color : gamestate['user' + userNo].color, 
+                    user : gamestate['user'+ (userNo ^ 1)].login});
+                opSocket.emit('response', {isValid : true, hex: data.hex, color : gamestate['user' + userNo].color,
+                    user : gamestate['user'+ (userNo ^ 1)].login});
                 if(isEnded == -1){
                     gamestate.whoseTurn = (gamestate.whoseTurn ^ 1);
                 }
@@ -460,7 +455,8 @@ io.on('connection', function(socket) {
             else
                 userNo = 1;
             var opSocket = AllGameStates[id]['user' + (userNo ^ 1)].socket;
-            opSocket.emit('reset'); 
+            opSocket.emit('reset', {user : AllGameStates[id].user0.login});
+            AllGameStates[id]['user'+ userNo].socket.emit('reset', {user : AllGameStates[id].user0.login});
         }
     });
     socket.on('disconnect', function() {
@@ -491,12 +487,7 @@ console.log( 'server listens' );
 
 
 /*
-
-
-12. CSS zeby bylo pieknie
-13. Gracz moze byc zalogowany 2 razy
-14. komunikat dla goscia ze wszedl do niego drugi gracz i czyja tura
-15. nazwy kart
+14. CSS zeby bylo pieknie
 */
 
 
@@ -505,5 +496,4 @@ console.log( 'server listens' );
 Problem:
 request na url wykonuje sie przed disconnectem wiec na rooms widzi sie stan gry jakby sie bylo w tej z ktorej sie wyszlo
 glupie rozwiazanie: dodac sztuczny url przed getem na rooms
-
 */
