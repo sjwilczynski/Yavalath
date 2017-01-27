@@ -1,10 +1,60 @@
 <!DOCTYPE html>
     <head>
         <title> Moje wyniki </title>
+        <style>
+            #results{
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                border-collapse : collapse;
+                width: 100%;
+            }
+
+            #results th, #results td{
+                border: 1px solid #ddd;
+                padding: 10px;
+                text-align: center;
+            }
+            
+            #results tr:nth-child(even){
+                background-color: #f2f2f2;
+            }
+            #results tr:hover {
+                background-color: #ddd;
+            }
+            #results th {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                background-color: dodgerblue;
+                color: floralwhite;
+            }
+            .myDiv{
+                width : 100%;
+                text-align: center;   
+            }
+            button{
+                 margin: 4px 2px;
+                -webkit-transition-duration: 0.4s; /* Safari */
+                transition-duration: 0.4s;
+                cursor: pointer;
+                background-color: white;
+                color: darkslategray;
+                border: 2px solid black;
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                clear : both;
+                height: 30px;
+                width: 100%;
+            }
+            button:hover{
+                background-color: darkslategray;
+                color: white;
+            }
+            .message {
+                color : red;
+            }
+        </style>
     </head>
     <body>
         <% if( locals.history.length > 0 ){ %> 
-        <table>
+        <table id = 'results'>
             <tr>
                 <th>Gracz1</th><th>Gracz2</th><th>Data</th><th>Zwycięzca</th>
             </tr>
@@ -23,21 +73,21 @@
             Nie masz jeszcze żadnych rozegranych gier :(
         </div>
         <% } %>
-        <div>
+        <div class = 'myDiv'>
             <form method="GET" action = '/rooms' >
                 <div>
                     <button>Wróć do menu pokoi</button>
                 </div>
             </form>
         </div>
-        <div>
+        <div class = 'myDiv'>
         <form method="GET" action = '/logout' >
             <div>
                 <button>Wyloguj się</button>
             </div>
         </form>
         </div>
-        <div>
+        <div class = 'myDiv'>
             <% if ( locals.message ) { %>
             <div class='message'>
                 <%= locals.message %>

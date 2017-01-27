@@ -8,8 +8,11 @@
         height: 100%;
         overflow: hidden;
     }
+    body{
+        background-image: url('tlo.jpg');
+    }
 
-    form {
+    #form1 {
         display         : flex;
         justify-content : center;
         align-items     : center;        
@@ -17,7 +20,10 @@
 
     #login {
         padding          : 20px;
-        border           : 1px solid black;
+        border           : 2px solid black;
+        text-align: center;
+        background-color: lightyellow;
+        font-weight: bold;
     }
 
     #login div {
@@ -28,42 +34,62 @@
         float : right;
     }
 
-    button {
-        clear : both;
+    button{
+            margin : 1px 1px;
+            -webkit-transition-duration: 0.4s; /* Safari */
+            transition-duration: 0.4s;
+            cursor: pointer;
+            background-color: white;
+            color: darkslategray;
+            border: 2px solid black;
+            border-radius: 10px;
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            clear : both;
+            width: 95%;
+    }
+    button:hover{
+        background-color: darkslategray;
+        color: white;
     }
    
+    input{
+        border: 1px solid black;
+        margin: 2px 2px;
+    }
     .message {
         color : red;
     }
     </style>
 </head>
 <body>
-    <form method="POST" action = "/login">
-    <div id='login'>
-        <div>
-        Rejestracja
-        </div>
-        <div>
-        <label>Nazwa użytkownika:</label>
-        <input type='text' name='username' />
-        </div>
-        <div>
-        <input type='password' name='pwd' />
-        <label>Hasło:</label>
-        </div>
-        <div>
-        <input type='password' name='pwd2' />
-        <label>Powtórz Hasło:</label>
-        </div>
-        <div>
-            <button>Zarejestruj</button>
-        </div>
-        <% if ( locals.message ) { %>
-            <div class='message'>
-                <%= locals.message %>
+    <div>
+    <form id = 'form1' method="POST" action = "/login">
+        <div id='login'>
+            <div>
+                Rejestracja
             </div>
-        <% } %>
-    </div>
+            <div>
+                <label>Nazwa użytkownika:</label>
+                <input type='text' name='username' />
+            </div>
+            <div>
+                <input type='password' name='pwd' />
+                <label>Hasło:</label>
+            </div>
+            <div>
+                <input type='password' name='pwd2' />
+                <label>Powtórz Hasło:</label>
+            </div>
+            <div>
+                <button>Zarejestruj</button>
+            </div>
+            <% if ( locals.message ) { %>
+                <div class='message'>
+                    <%= locals.message %>
+                </div>
+            <% } %>
+        </div>
     </form>
+    </div>
 </body>
 </html>

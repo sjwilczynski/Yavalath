@@ -306,7 +306,7 @@ app.post('/login',(req,res) =>{
 });
 
 app.post('/register',(req,res) =>{
-    res.render('register', {message : "hello"});
+    res.render('register');
 });
 
 app.get('/register', authorize, (req,res) =>{
@@ -340,9 +340,7 @@ app.get('/results', authorize, (req,res) =>{
 
 app.get('/logout', authorize, (req,res) =>{
     res.cookie('username', '', {signed : true, maxAge : -1});
-    res.contentType('text/html');
-    res.write('Wylogowano');
-    res.end();
+    res.render('login',{message : 'Wylogowano'})
 });
 
 

@@ -1,16 +1,72 @@
 <!DOCTYPE html>
     <head>
         <title> Pokoje </title>
+        <style>
+            #rooms{
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                border-collapse : collapse;
+                width: 100%;
+            }
+
+            #rooms th, #rooms td{
+                border: 1px solid #ddd;
+                padding: 10px;
+                text-align: center;
+            }
+            
+            #rooms tr:nth-child(even){
+                background-color: #f2f2f2;
+            }
+            #rooms tr:hover {
+                background-color: #ddd;
+            }
+            #rooms th {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                background-color: #4CAF50;
+                color: floralwhite;
+            }
+            .myDiv{
+                width : 100%;
+                text-align: center;   
+            }
+            button{
+                 margin: 4px 2px;
+                -webkit-transition-duration: 0.4s; /* Safari */
+                transition-duration: 0.4s;
+                cursor: pointer;
+                background-color: white;
+                color: darkslategray;
+                border: 2px solid black
+            }
+            button:hover{
+                background-color: darkslategray;
+                color: white;
+            }
+            .myButton1 {
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                clear : both;
+                height: 30px;
+                width: 100%;
+            }
+            .myButton2{
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            }
+   
+            .message {
+                color : red;
+            }
+        </style>
     </head>
     <body>
-        <table>
+        <table id = 'rooms'>
             <tr>
                 <th>Numer pokoju</th><th>Gracz1</th><th>Gracz2</th><th>Dołącz</th>
             </tr>
 
             <% for(var i = 0; i < locals.AllGameStates.length; i++) { %>
                 <tr>
-                    <td><%= locals.AllGameStates[i].id %></td>
+                    <td style="width: 10%"><%= locals.AllGameStates[i].id %></td>
                     <% if (locals.AllGameStates[i].user0) { %>
                     <td><%= locals.AllGameStates[i].user0.login%></td>
                     <% }
@@ -29,7 +85,7 @@
                     else {%>
                     <td><form method="GET" action = <%= "/game" + locals.AllGameStates[i].id %> >
                         <div>
-                        <button>Dołącz do gry</button>
+                        <button class='myButton2'>Dołącz do gry</button>
                         </div>
                     </form></td>
                     <% } %>
@@ -37,20 +93,21 @@
             <% } %>
         </table>
         <div>
+        <div class = 'myDiv'>
         <form method="GET" action = '/results' >
             <div>
-                <button>Wyniki</button>
+                <button class = 'myButton1'>Wyniki</button>
             </div>
         </form>
         </div>
-        <div>
+        <div class = 'myDiv'>
         <form method="GET" action = '/logout' >
             <div>
-                <button>Wyloguj się</button>
+                <button class='myButton1'>Wyloguj się</button>
             </div>
         </form>
         </div>
-        <div>
+        <div class = 'myDiv'>
             <% if ( locals.message ) { %>
             <div class='message'>
                 <%= locals.message %>
