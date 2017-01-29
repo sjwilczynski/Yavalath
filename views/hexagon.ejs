@@ -7,52 +7,60 @@
     <script src="hex.js"></script>
 </head>
 <style>
-    myDiv{
-        width : 100%;
-        text-align: center;
-        float: none;
-        justify-content: center;
+    body{
+        background-color : #c4cec2;
+        font-family: "Copperplate Gothic Light", sans-serif;
+    }
+    #left{
+        margin-top : 85px;
+        position : fixed;
+        left : 0px;
+        width : 20%;
+        font-weight: bold;
     }
     button{
-            margin : 1px 1px;
-            -webkit-transition-duration: 0.4s; /* Safari */
-            transition-duration: 0.4s;
-            cursor: pointer;
-            background-color: white;
-            color: darkslategray;
-            border: 2px solid black;
-            border-radius: 10px;
-            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-            clear : both;
-            margin-left: 2,5%;
-            width: 95%;
+        margin: 4px 2px;
+        -webkit-transition-duration: 0.4s; /* Safari */
+        transition-duration: 0.4s;
+        cursor: pointer;
+        background-color: white;
+        color: darkslategray;
+        border: 2px solid black;
+        border-radius: 8px;
     }
     button:hover{
         background-color: darkslategray;
         color: white;
     }
+    .myButton1 {
+        height: 40px;
+        width: 60%;
+        margin-bottom: 15px;
+        margin-left: 10px;
+    }
     #header{
         width : 100%;
         position: fixed; 
+        color: #293826;
         top : 0px;
         margin-bottom: 4px;
-        background-color: seagreen;
+        background-color: #84ba7a;
         border : solid 1px black;
         height : 60px;
-        line-height: 20px;
+        line-height: 50px;
         text-align: center;
         display: inline-block;
-        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-        color : whitesmoke;
-        font-size: 15px;
-        font-weight: bold;        
+        font-size: 36px;
+        font-weight: bold;
+        justify-content: center;               
     }
     #info{
         margin-bottom: 4px;
-        background-color: blue;
+        background-color: #f28237;
         border : solid 1px black;
         height : 30px;
         line-height: 30px;
+        font-size: 20px;
     }
     #HexCanvas{
       justify-content: center;  
@@ -66,17 +74,20 @@
 </style>
 <body>
     <div id = 'header'>
-            Mysterious Woodland Yavalath<br>by Jakub Schreiber and Stanisław Wilczyński
+            Mysterious Woodland Yavalath
             <div id = 'info'> </div>
     </div>
+    <div id = 'left'>
+        <div>
+            <button id = "reset" class = 'myButton1' onclick="resetGame()">Jeszcze raz</button>
+        </div>
+        <div>
+            <button id = "quit" class = 'myButton1' onclick="goToRooms()">Opuść grę</button>
+        </div>
+    </div>
     
-    <myDiv>
+    <div>
         <canvas id="HexCanvas" width = '800' height='640'></canvas>
-    </myDiv>
-
-    <div id = 'buttons'>
-        <button id = "reset" onclick="resetGame()">Jeszcze raz</button>
-        <button id = "quit" onclick="goToRooms()">Opuść grę</button>
     </div>
   
     <script>
@@ -96,10 +107,8 @@
             info.innerHTML = "Remis";
         });
         socket.on('user disconnected', function(){
-            document.getElementById('HexCanvas').style.display = "none";
             document.getElementById('reset').style.display = "none";
-            document.getElementById('buttons').style.marginTop = '100px';
-            info.innerHTML = "Twój przeciwnik wyszedł z gry"; 
+            info.innerHTML = "Twój przeciwnik opuścił grę"; 
         });
         socket.on('reset',function(data){
             info.innerHTML = 'Teraz kolej gracza ' + data.user; 
@@ -117,7 +126,7 @@
             }
         });
         socket.on('firstPlayer', function(data){
-            info.innerHTML = 'Musisz poczekać na drugiego gracza';
+            info.innerHTML = 'Czekaj na drugiego gracza';
         });
         socket.on('secondPlayer', function(data){
             info.innerHTML = 'Teraz kolej gracza ' + data.user; 

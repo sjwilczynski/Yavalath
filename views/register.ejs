@@ -8,6 +8,10 @@
         height: 100%;
         overflow: hidden;
     }
+    body{
+        background-color : #c4cec2;
+        font-family: "Copperplate Gothic Light", sans-serif;;
+    }
 
     #form1 {
         display         : flex;
@@ -17,10 +21,12 @@
 
     #login {
         padding          : 20px;
-        border           : 2px solid black;
+        border           : 2px solid #293826;
+        border-radius: 8px;
         text-align: center;
-        background-color: lightyellow;
+        background-color:#b5bab4;
         font-weight: bold;
+        font-family: Courier, "Lucida Console", monospace;
     }
 
     #login div {
@@ -32,7 +38,7 @@
     }
 
     button{
-            margin : 1px 1px;
+            margin : 5px 5px;
             -webkit-transition-duration: 0.4s; /* Safari */
             transition-duration: 0.4s;
             cursor: pointer;
@@ -42,7 +48,9 @@
             border-radius: 10px;
             font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
             clear : both;
-            width: 95%;
+            width: 60%;
+            height: 35px;
+            font-size: 16px;
             border-radius: 8px;
     }
     button:hover{
@@ -55,34 +63,34 @@
         margin: 2px 2px;
     }
     .message {
-        color : red;
+        color : #f28237;
     }
     #header{
                 width : 100%;
                 position: fixed; 
+                color: #293826;
                 top : 0px;
                 margin-bottom: 4px;
-                background-color: seagreen;
+                background-color: #84ba7a;
                 border : solid 1px black;
                 height : 60px;
-                line-height: 30px;
+                line-height: 50px;
                 text-align: center;
                 display: inline-block;
-                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-                color : whitesmoke;
-                font-size: 20px;
-                font-weight: bold;               
+                font-size: 36px;
+                font-weight: bold;
+                justify-content: center;               
             }
     </style>
 </head>
 <body>
     <div id = 'header'>
-            Mysterious Woodland Yavalath<br>by Jakub Schreiber and Stanisław Wilczyński
+            Mysterious Woodland Yavalath
     </div>
     <div style = 'margin-top : 70px'>
     <form id = 'form1' method="POST" action = "/login">
         <div id='login'>
-            <div>
+            <div style = 'margin-bottom : 12px; font-size : 20px'>
                 Rejestracja
             </div>
             <div>

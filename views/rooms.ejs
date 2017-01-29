@@ -2,11 +2,15 @@
     <head>
         <title> Pokoje </title>
         <style>
+            body{
+                background-color : #c4cec2;
+                font-family: "Copperplate Gothic Light", sans-serif;;
+            }
             #rooms{
-                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
                 border-collapse : collapse;
-                width: 100%;
+                width: 70%;
                 margin-top : 70px;
+                margin-left : 15%;
             }
 
             #rooms th, #rooms td{
@@ -24,29 +28,30 @@
             #rooms th {
                 padding-top: 12px;
                 padding-bottom: 12px;
-                background-color: #4CAF50;
+                background-color:#a8a8a8;
                 color: floralwhite;
-            }
-            .myDiv{
-                width : 100%;
-                text-align: center;   
             }
             #header{
                 width : 100%;
                 position: fixed; 
+                color: #293826;
                 top : 0px;
                 margin-bottom: 4px;
-                background-color: seagreen;
+                background-color: #84ba7a;
                 border : solid 1px black;
                 height : 60px;
-                line-height: 30px;
+                line-height: 50px;
                 text-align: center;
                 display: inline-block;
-                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-                color : whitesmoke;
-                font-size: 20px;
+                font-size: 36px;
                 font-weight: bold;
-                
+                justify-content: center;               
+            }
+            #left{
+                position : fixed;
+                left : 0px;
+                width : 20%;
+                font-weight: bold;
             }
             button{
                 margin: 4px 2px;
@@ -63,27 +68,51 @@
                 color: white;
             }
             .myButton1 {
-                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-                clear : both;
-                height: 30px;
-                width: 100%;
+                height: 40px;
+                width: 60%;
+                margin-bottom: 15px;
+                margin-left: 10px;
             }
-            .myButton2{
-                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-            }
-   
             .message {
-                color : red;
+                color : #f28237;
             }
         </style>
     </head>
     <body>
         <div id = 'header'>
-            Mysterious Woodland Yavalath<br>by Jakub Schreiber and Stanisław Wilczyński
+            Mysterious Woodland Yavalath
         </div>
-
+        <div id = 'left'>
+            <div>
+            <form method="GET" action = '/results' >
+                <div>
+                    <button class = 'myButton1'>Statystyki</button>
+                </div>
+            </form>
+            </div>
+            <div>
+            <form method="GET" action = 'http://www.iggamecenter.com/info/en/yavalath.html' >
+                <div>
+                    <button class = 'myButton1'>Instrukcja</button>
+                </div>
+            </form>
+            </div>
+            <div>
+            <form method="GET" action = '/logout' >
+                <div>
+                    <button class='myButton1'>Wyloguj się</button>
+                </div>
+            </form>
+            </div>
+            <div>
+                <% if ( locals.message ) { %>
+                <div class='message'>
+                    <%= locals.message %>
+                </div>
+                <% } %>
+            </div>
         </div>
-        <table id = 'rooms'>
+        <table id = 'rooms' style = 'margin-top: 70px'>
             <tr>
                 <th>Numer pokoju</th><th>Gracz1</th><th>Gracz2</th><th>Dołącz</th>
             </tr>
@@ -109,41 +138,13 @@
                     else {%>
                     <td><form method="GET" action = <%= "/game" + locals.AllGameStates[i].id %> >
                         <div>
-                        <button class='myButton2'>Dołącz do gry</button>
+                        <button>Dołącz do gry</button>
                         </div>
                     </form></td>
                     <% } %>
                 </tr>    
             <% } %>
         </table>
-        <div>
-        <div class = 'myDiv'>
-        <form method="GET" action = '/results' >
-            <div>
-                <button class = 'myButton1'>Wyniki</button>
-            </div>
-        </form>
-        </div>
-        <form method="GET" action = 'http://www.iggamecenter.com/info/en/yavalath.html' >
-            <div>
-                <button class = 'myButton1'>Instrukcja</button>
-            </div>
-        </form>
-        </div>
-        <div class = 'myDiv'>
-        <form method="GET" action = '/logout' >
-            <div>
-                <button class='myButton1'>Wyloguj się</button>
-            </div>
-        </form>
-        </div>
-        <div class = 'myDiv'>
-            <% if ( locals.message ) { %>
-            <div class='message'>
-                <%= locals.message %>
-            </div>
-            <% } %>
-        </div>
 </body>
 </html>	
 

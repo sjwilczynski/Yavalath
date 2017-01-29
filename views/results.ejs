@@ -2,11 +2,15 @@
     <head>
         <title> Moje wyniki </title>
         <style>
+            body{
+                background-color : #c4cec2;
+                font-family: "Copperplate Gothic Light", sans-serif;;
+            }
             #results{
-                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
                 border-collapse : collapse;
-                width: 100%;
+                width: 70%;
                 margin-top : 70px;
+                margin-left : 15%;
             }
 
             #results th, #results td{
@@ -24,56 +28,82 @@
             #results th {
                 padding-top: 12px;
                 padding-bottom: 12px;
-                background-color: dodgerblue;
+                background-color:#a8a8a8;
                 color: floralwhite;
             }
-            .myDiv{
+            #header{
                 width : 100%;
-                text-align: center;   
+                position: fixed; 
+                color: #293826;
+                top : 0px;
+                margin-bottom: 4px;
+                background-color: #84ba7a;
+                border : solid 1px black;
+                height : 60px;
+                line-height: 50px;
+                text-align: center;
+                display: inline-block;
+                font-size: 36px;
+                font-weight: bold;
+                justify-content: center;               
+            }
+            #left{
+                position : fixed;
+                left : 0px;
+                width : 20%;
+                font-weight: bold;
             }
             button{
-                 margin: 4px 2px;
+                margin: 4px 2px;
                 -webkit-transition-duration: 0.4s; /* Safari */
                 transition-duration: 0.4s;
                 cursor: pointer;
                 background-color: white;
                 color: darkslategray;
                 border: 2px solid black;
-                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-                clear : both;
-                height: 30px;
-                width: 100%;
                 border-radius: 8px;
             }
             button:hover{
                 background-color: darkslategray;
                 color: white;
             }
-            .message {
-                color : red;
+            .myButton1 {
+                height: 40px;
+                width: 60%;
+                margin-bottom: 15px;
+                margin-left: 10px;
             }
-            #header{
-                width : 100%;
-                position: fixed; 
-                top : 0px;
-                margin-bottom: 4px;
-                background-color: seagreen;
-                border : solid 1px black;
-                height : 60px;
-                line-height: 30px;
-                text-align: center;
-                display: inline-block;
-                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-                color : whitesmoke;
-                font-size: 20px;
-                font-weight: bold;
-                
+            .message {
+                color : #f28237;
             }
         </style>
     </head>
     <body>
         <div id = 'header'>
-            Mysterious Woodland Yavalath<br>by Jakub Schreiber and Stanisław Wilczyński
+            Mysterious Woodland Yavalath
+        </div>
+        <div id = 'left'>
+            <div>
+            <form method="GET" action = '/rooms' >
+                <div>
+                    <button class = 'myButton1'>Wróć do menu pokoi</button>
+                </div>
+            </form>
+            </div>
+            <div>
+            <form method="GET" action = '/logout' >
+                <div>
+                    <button class = 'myButton1'>Wyloguj się</button>
+                </div>
+            </form>
+            </div>
+            <div>
+                <% if ( locals.message ) { %>
+                <div class='message'>
+                    <%= locals.message %>
+                </div>
+                <% } %>
+            </div>
         </div>
         <% if( locals.history.length > 0 ){ %> 
         <table id = 'results'>
@@ -95,27 +125,6 @@
             Nie masz jeszcze żadnych rozegranych gier :(
         </div>
         <% } %>
-        <div class = 'myDiv'>
-            <form method="GET" action = '/rooms' >
-                <div>
-                    <button>Wróć do menu pokoi</button>
-                </div>
-            </form>
-        </div>
-        <div class = 'myDiv'>
-        <form method="GET" action = '/logout' >
-            <div>
-                <button>Wyloguj się</button>
-            </div>
-        </form>
-        </div>
-        <div class = 'myDiv'>
-            <% if ( locals.message ) { %>
-            <div class='message'>
-                <%= locals.message %>
-            </div>
-            <% } %>
-        </div>
 </body>
 </html>	
 

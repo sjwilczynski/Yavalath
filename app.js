@@ -366,11 +366,11 @@ io.on('connection', function(socket) {
         socketList[socket.id] = username;
         gamestate = AllGameStates[id];
         if(gamestate.user0 == undefined){
-            gamestate.user0 = new User(username, "blue", socket);
+            gamestate.user0 = new User(username, "#84ba7a", socket);
             socket.emit('firstPlayer');
         }
         else if(gamestate.user1 == undefined){
-            gamestate.user1 = new User(username, "red", socket);
+            gamestate.user1 = new User(username, "#f28237", socket);
             gamestate.areTwoPlayers = 1;
             gamestate.user0.socket.emit('secondPlayer', { user : gamestate.user0.login});
             socket.emit('secondPlayer',{ user : gamestate.user0.login});
