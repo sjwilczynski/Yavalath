@@ -8,9 +8,6 @@
         height: 100%;
         overflow: hidden;
     }
-    body{
-        background-image: url('tlo.jpg');
-    }
 
     #form1 {
         display         : flex;
@@ -46,6 +43,7 @@
             font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
             clear : both;
             width: 95%;
+            border-radius: 8px;
     }
     button:hover{
         background-color: darkslategray;
@@ -59,10 +57,29 @@
     .message {
         color : red;
     }
+    #header{
+                width : 100%;
+                position: fixed; 
+                top : 0px;
+                margin-bottom: 4px;
+                background-color: seagreen;
+                border : solid 1px black;
+                height : 60px;
+                line-height: 30px;
+                text-align: center;
+                display: inline-block;
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                color : whitesmoke;
+                font-size: 20px;
+                font-weight: bold;               
+            }
     </style>
 </head>
 <body>
-    <div>
+    <div id = 'header'>
+            Mysterious Woodland Yavalath<br>by Jakub Schreiber and Stanisław Wilczyński
+    </div>
+    <div style = 'margin-top : 70px'>
     <form id = 'form1' method="POST" action = "/login">
         <div id='login'>
             <div>
@@ -83,6 +100,7 @@
             <div>
                 <button>Zarejestruj</button>
             </div>
+            
             <% if ( locals.message ) { %>
                 <div class='message'>
                     <%= locals.message %>

@@ -8,22 +8,76 @@
 </head>
 <style>
     myDiv{
-        display : none;
+        width : 100%;
+        text-align: center;
+        float: none;
+        justify-content: center;
     }
+    button{
+            margin : 1px 1px;
+            -webkit-transition-duration: 0.4s; /* Safari */
+            transition-duration: 0.4s;
+            cursor: pointer;
+            background-color: white;
+            color: darkslategray;
+            border: 2px solid black;
+            border-radius: 10px;
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            clear : both;
+            margin-left: 2,5%;
+            width: 95%;
+    }
+    button:hover{
+        background-color: darkslategray;
+        color: white;
+    }
+    #header{
+        width : 100%;
+        position: fixed; 
+        top : 0px;
+        margin-bottom: 4px;
+        background-color: seagreen;
+        border : solid 1px black;
+        height : 60px;
+        line-height: 20px;
+        text-align: center;
+        display: inline-block;
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        color : whitesmoke;
+        font-size: 15px;
+        font-weight: bold;        
+    }
+    #info{
+        margin-bottom: 4px;
+        background-color: blue;
+        border : solid 1px black;
+        height : 30px;
+        line-height: 30px;
+    }
+    #HexCanvas{
+      justify-content: center;  
+      margin-left : 20%;
+      margin-top: 80px;
+    }
+    #buttons{
+        text-align: center;
+    }
+    
 </style>
 <body>
-    
-
-    <div id = 'info'> </div> 
-    <div>
-        <canvas id="HexCanvas" width="800" height="640"></canvas>
+    <div id = 'header'>
+            Mysterious Woodland Yavalath<br>by Jakub Schreiber and Stanisław Wilczyński
+            <div id = 'info'> </div>
     </div>
-    <myDiv id = "text1" > The game is over</myDiv>
-    <myDiv id = "text2" > asfa</myDiv>
+    
+    <myDiv>
+        <canvas id="HexCanvas" width = '800' height='640'></canvas>
+    </myDiv>
 
-    <button id = "reset" onclick="resetGame()">Reset</button>
-    <button id = "quit" onclick="goToRooms()">Quit</button>
-
+    <div id = 'buttons'>
+        <button id = "reset" onclick="resetGame()">Jeszcze raz</button>
+        <button id = "quit" onclick="goToRooms()">Opuść grę</button>
+    </div>
   
     <script>
         var info = document.getElementById('info');
@@ -32,34 +86,23 @@
         var socket = io();
         socket.emit('MyConnection', {id : id, username : username});
         socket.on('endGame',function(data){
-            info.style.display = "none";
-            document.getElementById('text1').style.display = "block";
-            document.getElementById('text2').style.display = "block";
             if(data.winner == username){
-                document.getElementById('text2').innerHTML = "You win";
+                info.innerHTML = "Wygrałeś :)";
             } else{
-               document.getElementById('text2').innerHTML = "You lose"; 
+               info.innerHTML = "Przegrałeś :("; 
             }
         });
         socket.on('draw', function(data) {
-            info.style.display = "none";
-            document.getElementById('text1').style.display = "block";
-            document.getElementById('text2').style.display = "block";
-            document.getElementById('text2').innerHTML = "The result is draw";
+            info.innerHTML = "Remis";
         });
         socket.on('user disconnected', function(){
-            info.style.display = "none";
             document.getElementById('HexCanvas').style.display = "none";
             document.getElementById('reset').style.display = "none";
-            document.getElementById('text1').style.display = "block";
-            document.getElementById('text2').style.display = "block";
-            document.getElementById('text2').innerHTML = "Your opponent has left the game"; 
+            document.getElementById('buttons').style.marginTop = '100px';
+            info.innerHTML = "Twój przeciwnik wyszedł z gry"; 
         });
         socket.on('reset',function(data){
-            info.style.display = "block";
             info.innerHTML = 'Teraz kolej gracza ' + data.user; 
-            document.getElementById('text1').style.display = "none";
-            document.getElementById('text2').style.display = "none";
             hexagonGrid.drawHexGrid(false);
         });
         

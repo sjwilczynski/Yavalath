@@ -6,6 +6,7 @@
                 font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
                 border-collapse : collapse;
                 width: 100%;
+                margin-top : 70px;
             }
 
             #rooms th, #rooms td{
@@ -30,14 +31,32 @@
                 width : 100%;
                 text-align: center;   
             }
+            #header{
+                width : 100%;
+                position: fixed; 
+                top : 0px;
+                margin-bottom: 4px;
+                background-color: seagreen;
+                border : solid 1px black;
+                height : 60px;
+                line-height: 30px;
+                text-align: center;
+                display: inline-block;
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                color : whitesmoke;
+                font-size: 20px;
+                font-weight: bold;
+                
+            }
             button{
-                 margin: 4px 2px;
+                margin: 4px 2px;
                 -webkit-transition-duration: 0.4s; /* Safari */
                 transition-duration: 0.4s;
                 cursor: pointer;
                 background-color: white;
                 color: darkslategray;
-                border: 2px solid black
+                border: 2px solid black;
+                border-radius: 8px;
             }
             button:hover{
                 background-color: darkslategray;
@@ -59,6 +78,11 @@
         </style>
     </head>
     <body>
+        <div id = 'header'>
+            Mysterious Woodland Yavalath<br>by Jakub Schreiber and Stanisław Wilczyński
+        </div>
+
+        </div>
         <table id = 'rooms'>
             <tr>
                 <th>Numer pokoju</th><th>Gracz1</th><th>Gracz2</th><th>Dołącz</th>
@@ -71,13 +95,13 @@
                     <td><%= locals.AllGameStates[i].user0.login%></td>
                     <% }
                     else {%>
-                    <td>wolne1</td>
+                    <td>wolne</td>
                     <% } %>
                     <% if (locals.AllGameStates[i].user1) { %>
                     <td><%= locals.AllGameStates[i].user1.login%></td></td>
                     <% }
                     else {%>
-                    <td>wolne2</td>
+                    <td>wolne</td>
                     <% } %>
                     <% if (locals.AllGameStates[i].user1 && locals.AllGameStates[i].user0) { %>
                     <td>Pełny</td></td>
@@ -97,6 +121,12 @@
         <form method="GET" action = '/results' >
             <div>
                 <button class = 'myButton1'>Wyniki</button>
+            </div>
+        </form>
+        </div>
+        <form method="GET" action = 'http://www.iggamecenter.com/info/en/yavalath.html' >
+            <div>
+                <button class = 'myButton1'>Instrukcja</button>
             </div>
         </form>
         </div>
