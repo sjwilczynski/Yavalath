@@ -483,13 +483,6 @@ io.on('connection', function(socket) {
 
 console.log( 'server listens' );
 
-
-/*
-14. CSS zeby bylo pieknie
-*/
-
-
-
 /*
 Problem:
 request na url wykonuje sie przed disconnectem wiec na rooms widzi sie stan gry jakby sie bylo w tej z ktorej sie wyszlo
