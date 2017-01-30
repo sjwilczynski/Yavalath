@@ -488,3 +488,12 @@ Problem:
 request na url wykonuje sie przed disconnectem wiec na rooms widzi sie stan gry jakby sie bylo w tej z ktorej sie wyszlo
 glupie rozwiazanie: dodac sztuczny url przed getem na rooms
 */
+
+
+/*
+Dodatkowe:
+    1.czat moze byc fajny - na prawo od planszy jest miejsce
+    2.podswietlenie ostatniego ruchu - przydatne
+    3.czyja tura - jeszcze kwadracik z kolorem goscia
+    4.dorobic te kolorowe hexagony na stronach poza game
+*/
