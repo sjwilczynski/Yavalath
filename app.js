@@ -496,4 +496,5 @@ Dodatkowe:
     2.podswietlenie ostatniego ruchu - przydatne
     3.czyja tura - jeszcze kwadracik z kolorem goscia
     4.dorobic te kolorowe hexagony na stronach poza game
+    5. losowanie gracza zaczynającego rozgrywkę
 */
