@@ -86,14 +86,14 @@
             <div>
             <form method="GET" action = '/rooms' >
                 <div>
-                    <button class = 'myButton1'>Wróć do menu pokoi</button>
+                    <button class = 'myButton1'>Go back to rooms</button>
                 </div>
             </form>
             </div>
             <div>
             <form method="GET" action = '/logout' >
                 <div>
-                    <button class = 'myButton1'>Wyloguj się</button>
+                    <button class = 'myButton1'>Log out</button>
                 </div>
             </form>
             </div>
@@ -108,7 +108,7 @@
         <% if( locals.history.length > 0 ){ %> 
         <table id = 'results'>
             <tr>
-                <th>Gracz1</th><th>Gracz2</th><th>Data</th><th>Zwycięzca</th>
+                <th>Player1</th><th>Player2</th><th>Date</th><th>Winner</th>
             </tr>
 
             <% for(var i = 0; i < locals.history.length; i++) { %>
@@ -122,7 +122,7 @@
         </table>
         <% }  else {%>
         <div>
-            Nie masz jeszcze żadnych rozegranych gier :(
+            You haven't played any games yet :(
         </div>
         <% } %>
 </body>

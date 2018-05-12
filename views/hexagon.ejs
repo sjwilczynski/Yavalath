@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Zapraszam do zabawy ;)</title>
+    <title>It's time for some fun ;)</title>
     <script src="/socket.io/socket.io.js"></script>
     <script src="hex.js"></script>
 </head>
@@ -79,10 +79,10 @@
     </div>
     <div id = 'left'>
         <div>
-            <button id = "reset" class = 'myButton1' onclick="resetGame()">Jeszcze raz</button>
+            <button id = "reset" class = 'myButton1' onclick="resetGame()">One more time</button>
         </div>
         <div>
-            <button id = "quit" class = 'myButton1' onclick="goToRooms()">Opuść grę</button>
+            <button id = "quit" class = 'myButton1' onclick="goToRooms()">Leave the game</button>
         </div>
     </div>
     
@@ -98,27 +98,27 @@
         socket.emit('MyConnection', {id : id, username : username});
         socket.on('endGame',function(data){
             if(data.winner == username){
-                info.innerHTML = "Wygrałeś :)";
+                info.innerHTML = "You won :)";
             } else{
-               info.innerHTML = "Przegrałeś :("; 
+               info.innerHTML = "You lost :("; 
             }
         });
         socket.on('draw', function(data) {
-            info.innerHTML = "Remis";
+            info.innerHTML = "It's a tie";
         });
         socket.on('user disconnected', function(){
             document.getElementById('reset').style.display = "none";
-            info.innerHTML = "Twój przeciwnik opuścił grę"; 
+            info.innerHTML = "Your opponent has left the game"; 
         });
         socket.on('reset',function(data){
-            info.innerHTML = 'Teraz kolej gracza ' + data.user; 
+            info.innerHTML = "It's  " + data.user + " turn"; 
             hexagonGrid.drawHexGrid(false);
         });
         
         socket.on('response', function( data ){
             if(data.isValid){
                 hexagonGrid.drawHex(data.hex, data.color, "", false);
-                info.innerHTML = 'Teraz kolej gracza ' + data.user; 
+                info.innerHTML = "It's  " + data.user + " turn"; 
                 console.log(data.isValid, data.hex.coordinates.x, data.hex.coordinates.y);
             }
             else{
@@ -126,10 +126,10 @@
             }
         });
         socket.on('firstPlayer', function(data){
-            info.innerHTML = 'Czekaj na drugiego gracza';
+            info.innerHTML = 'Waiting for an opponent';
         });
         socket.on('secondPlayer', function(data){
-            info.innerHTML = 'Teraz kolej gracza ' + data.user; 
+            info.innerHTML = "It's  " + data.user + " turn"; 
         });
 
 

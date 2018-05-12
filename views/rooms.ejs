@@ -86,21 +86,21 @@
             <div>
             <form method="GET" action = '/results' >
                 <div>
-                    <button class = 'myButton1'>Statystyki</button>
+                    <button class = 'myButton1'>Results</button>
                 </div>
             </form>
             </div>
             <div>
             <form method="GET" action = 'http://www.iggamecenter.com/info/en/yavalath.html' >
                 <div>
-                    <button class = 'myButton1'>Instrukcja</button>
+                    <button class = 'myButton1'>Instruction</button>
                 </div>
             </form>
             </div>
             <div>
             <form method="GET" action = '/logout' >
                 <div>
-                    <button class='myButton1'>Wyloguj się</button>
+                    <button class='myButton1'>Log out</button>
                 </div>
             </form>
             </div>
@@ -114,7 +114,7 @@
         </div>
         <table id = 'rooms' style = 'margin-top: 70px'>
             <tr>
-                <th>Numer pokoju</th><th>Gracz1</th><th>Gracz2</th><th>Dołącz</th>
+                <th>Room number</th><th>Player1</th><th>Player2</th><th>Join</th>
             </tr>
 
             <% for(var i = 0; i < locals.AllGameStates.length; i++) { %>
@@ -124,21 +124,21 @@
                     <td><%= locals.AllGameStates[i].user0.login%></td>
                     <% }
                     else {%>
-                    <td>wolne</td>
+                    <td>Free</td>
                     <% } %>
                     <% if (locals.AllGameStates[i].user1) { %>
                     <td><%= locals.AllGameStates[i].user1.login%></td></td>
                     <% }
                     else {%>
-                    <td>wolne</td>
+                    <td>Free</td>
                     <% } %>
                     <% if (locals.AllGameStates[i].user1 && locals.AllGameStates[i].user0) { %>
-                    <td>Pełny</td></td>
+                    <td>Full</td></td>
                     <% }
                     else {%>
                     <td><form method="GET" action = <%= "/game" + locals.AllGameStates[i].id %> >
                         <div>
-                        <button>Dołącz do gry</button>
+                        <button>Join</button>
                         </div>
                     </form></td>
                     <% } %>

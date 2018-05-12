@@ -260,14 +260,14 @@ app.post('/rooms', (req,res) =>{
                 res.cookie('username', username, {signed : true});
                 res.render('rooms',{AllGameStates : AllGameStates, username : username});  
             } else{
-                res.render('login',{ message : "Zły login lub hasło" });
+                res.render('login',{ message : "Wrong login or password" });
             }
         } else{
-            res.render('login',{ message : "Zły login lub hasło" });
+            res.render('login',{ message : "Wrong login or password" });
         }
     	})
     	.catch( err => {
-        	 res.render('login',{ message : "Coś poszło nie tak - spróbuj jeszcze raz"});
+        	 res.render('login',{ message : "Something went wrong - try again"});
     	});		
 });
 
@@ -281,27 +281,27 @@ app.post('/login',(req,res) =>{
             case 1:
                 db.query("INSERT INTO users VALUES ($1,$2)",[username,passwd])
                 .then( _ => {
-                    res.render('login', {message : "Zostałeś zarejestrowany"});
+                    res.render('login', {message : "You signed up successfully"});
                 })
                 .catch( err => {
-                    res.render('register',{ message : "Coś poszło nie tak - spróbuj jeszcze raz" + err.toString()});
+                    res.render('register',{ message : "Something went wrong - try again" + err.toString()});
                 })       
                 break;
             case -1:
-                res.render('register',{ message : "Hasła nie zgadzają się" });
+                res.render('register',{ message : "Passwords are different" });
                 break;
             case -2:
-                res.render('register',{ message : "Hasło lub login są niepoprawne - za krótkie" });
+                res.render('register',{ message : "Password or login are too short" });
                 break;
             case 0:
-                res.render('register',{ message : "Podana nazwa użytkownika jest zajęta" });
+                res.render('register',{ message : "This username has been already taken" });
                 break;
             case 2:
-                res.render('register',{ message : "Coś poszło nie tak - spróbuj jeszcze raz"});
+                res.render('register',{ message : "Something went wrong - try again"});
         }   
     })
     verify.catch( err => {
-        res.render('register',{ message : "Coś poszło nie tak - spróbuj jeszcze raz"});
+        res.render('register',{ message : "Something went wrong - try again"});
     })
 });
 
@@ -319,7 +319,7 @@ app.get('/rooms', authorize, (req,res) =>{
 
 app.get('/game:id', authorize, (req,res) =>{
     var id = req.params.id;
-    console.log("request na game z parametrami:",id, req.signedCookies.username)
+    console.log("request on game with parameters:",id, req.signedCookies.username)
     if( AllGameStates[id].areTwoPlayers ){
         res.render('rooms', {AllGameStates : AllGameStates, username : req.signedCookies.username, message : "W tym pokoju nie ma miejsca"})
     } else{
@@ -348,7 +348,7 @@ function authorize(req, res, next) {
     if ( req.signedCookies.username != undefined ) {
         next();
     } else {
-        console.log('nie bylo ciacha');
+        console.log('no cookie');
         res.redirect('/login');
     }
 }
@@ -409,7 +409,7 @@ io.on('connection', function(socket) {
                     db.query("INSERT INTO history(user1, user2, winner) VALUES ($1,$2,$3)",
                     [ gamestate.user0.login, gamestate.user1.login, gamestate.user0.login])
                     .catch(err =>{
-                        console.log("Problem przy zapisie wyniku do bazy")
+                        console.log("Problem when saving result to the database")
                     });
                     socket.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
                     opSocket.emit('endGame', {winner : gamestate.user0.login, looser : gamestate.user1.login});
@@ -419,7 +419,7 @@ io.on('connection', function(socket) {
                     db.query("INSERT INTO history(user1, user2, winner) VALUES ($1,$2,$3)",
                     [ gamestate.user0.login, gamestate.user1.login, gamestate.user1.login])
                     .catch(err =>{
-                        console.log("Problem przy zapisie wyniku do bazy")
+                        console.log("Problem when saving result to the database")
                     });
                     socket.emit('endGame', {winner : gamestate.user1.login, looser : gamestate.user0.login});
                     opSocket.emit('endGame', {winner : gamestate.user1.login, looser : gamestate.user0.login});
@@ -429,7 +429,7 @@ io.on('connection', function(socket) {
                     db.query("INSERT INTO history(user1, user2, winner) VALUES ($1,$2,$3)",
                     [ gamestate.user0.login, gamestate.user1.login, 'draw'])
                     .catch(err =>{
-                        console.log("Problem przy zapisie wyniku do bazy")
+                        console.log("Problem when saving result to the database")
                     });
                     socket.emit('draw', {});
                     opSocket.emit('draw', {});
@@ -442,7 +442,7 @@ io.on('connection', function(socket) {
         }
     });
     socket.on('reset', function(data){
-        console.log('jestem w reset z params:', data.id, data.username);
+        console.log('in reset with params:', data.id, data.username);
         var id = findGameNo(data.username);
         if(id != -1 && AllGameStates[id].areTwoPlayers)
         {
@@ -472,7 +472,7 @@ io.on('connection', function(socket) {
                     db.query("INSERT INTO history(user1, user2, winner) VALUES ($1,$2,$3)",
                     [ AllGameStates[id]['user' + userNo].login, AllGameStates[id]['user' + (userNo ^ 1)].login, AllGameStates[id]['user' + (userNo ^ 1)].login])
                     .catch(err =>{
-                        console.log("Problem przy zapisie wyniku do bazy")
+                        console.log("Problem when saving result to the database")
                     });
                 }
             }
@@ -482,19 +482,3 @@ io.on('connection', function(socket) {
 });
 
 console.log( 'server listens' );
-
-/*
-Problem:
-request na url wykonuje sie przed disconnectem wiec na rooms widzi sie stan gry jakby sie bylo w tej z ktorej sie wyszlo
-glupie rozwiazanie: dodac sztuczny url przed getem na rooms
-*/
-
-
-/*
-Dodatkowe:
-    1.czat moze byc fajny - na prawo od planszy jest miejsce
-    2.podswietlenie ostatniego ruchu - przydatne
-    3.czyja tura - jeszcze kwadracik z kolorem goscia
-    4.dorobic te kolorowe hexagony na stronach poza game
-    5. losowanie gracza zaczynającego rozgrywkę
-*/
