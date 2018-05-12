@@ -1,6 +1,5 @@
 
 // Hex math defined here: http://blog.ruslans.com/2011/02/hexagonal-grid-math.html
-// po stronie serwera -> wobrazam sobie ze do serwera przesylamy wspolrzedne kliknietego hexa -> tam mamy liste hexow i ich wlasciwosci (czy pokolorowany na jaki kolor) , po kazdym poprawnie zamalowanym klocku sprawdzamy czy nie ma konca gry -> to schreiber ja plansze cyba ze bedzie sie chcial zamienic ^^ na poczatek zrobmy ze tylko 2 osoby moga grac
 
 function Vector(x0,y0){
     this.x = x0;
@@ -90,7 +89,7 @@ function HexagonGrid(canvasId, username, id, socket, radius) {
     this.v1 = new Vector(this.height,0);
     this.v2 = new Vector(-this.height/2, this.side);
     this.gridCoordinates = generateGridCoordinates( this.v1 , this.v2, this.grid0X, this.grid0Y); //drawn hexagons
-    this.borderGridCoordinates = generateBorderGridCoordinates( this.v1 , this.v2, this.grid0X, this.grid0Y); //haxagons not drawn - for calculations pupose
+    this.borderGridCoordinates = generateBorderGridCoordinates( this.v1 , this.v2, this.grid0X, this.grid0Y); //hexagons not drawn - for calculations purpose
     this.coordinates = this.gridCoordinates.concat(this.borderGridCoordinates);
     
     this.canvas.addEventListener("mousedown", this.clickEvent.bind(this), false);
@@ -105,8 +104,8 @@ HexagonGrid.prototype.drawHexGrid = function (isDebug) {
         this.drawHex(coord, "", debugText, isDebug);
     }
     for(coord of this.coordinates){
-        console.log('wspolrzedne:',coord.coordinates.x, coord.coordinates.y)
-        console.log('pixele:',coord.pixels.x, coord.pixels.y)
+        console.log('coordinates:',coord.coordinates.x, coord.coordinates.y)
+        console.log('pixels:',coord.pixels.x, coord.pixels.y)
     }
 
 };
@@ -122,7 +121,7 @@ HexagonGrid.prototype.drawHex = function(coord, fillColor, debugText, isDebug) {
     console.log("funkcja drawHex z parametrami:",coord.coordinates.x,coord.coordinates.y,fillColor,isDebug);
     this.context.strokeStyle = "#000";
     var angle = Math.PI / 6;
-    this.context.beginPath(); //bez beginPath zamalowywal na niebiesko takze ostatni narysowany - glupie
+    this.context.beginPath(); //without beginPath it painted in blue also the last filled one
     this.context.moveTo (x0 +  this.radius * Math.cos(angle), y0 +  this.radius *  Math.sin(angle));       
  
     for (var i = 1; i <= 6; i++) {
@@ -130,12 +129,11 @@ HexagonGrid.prototype.drawHex = function(coord, fillColor, debugText, isDebug) {
     }
  
     this.context.fillStyle = fillColor;
-    this.context.fill(); //wypelnianie kolorem
+    this.context.fill(); //filling with color
 
-    this.context.stroke(); //faktyczne rysowanie
+    this.context.stroke(); //actual drawing
     if(isDebug){
         this.context.beginPath();
-        //this.context.closePath(); polacz z punktem poczatkowym sciezki
         this.context.arc(x0, y0, 2, 0, 2 * Math.PI, false);
         this.context.fillStyle = 'black';
         this.context.fill();
@@ -165,7 +163,7 @@ HexagonGrid.prototype.getSelectedHex = function(mouseCoordinates) {
         }
     }
     if(distance > this.radius || this.borderGridCoordinates.indexOf(closestCenter) != -1){
-        console.log("Nie trafiłeś")
+        console.log("You missed")
         return undefined;
     }
     else{
@@ -175,7 +173,7 @@ HexagonGrid.prototype.getSelectedHex = function(mouseCoordinates) {
 };
 
 HexagonGrid.prototype.clickEvent = function (e) {
-	//zamiast od razu rysowac bedziemy wysylac przez socket info ze klikniete i wspolrzedne kliknietego
+	//instead of drawing immediately we send coordinates of the clicked hex by socket
     var offset = this.getRelativeCanvasOffset();
     var mouseX = e.pageX - offset.x;
     var mouseY = e.pageY - offset.y;
@@ -193,7 +191,7 @@ function distanceFromHex(mouseCoordinates,coord){
     return Math.sqrt( (coord.pixels.x - mouseCoordinates.x)*(coord.pixels.x - mouseCoordinates.x) + (coord.pixels.y - mouseCoordinates.y)*(coord.pixels.y - mouseCoordinates.y) );
 }
 
-//Recusivly step up to the body to calculate canvas offset
+//Recursively step up to the body to calculate canvas offset
 HexagonGrid.prototype.getRelativeCanvasOffset = function() {
 	var x = 0, y = 0;
 	var layoutElement = this.canvas;
