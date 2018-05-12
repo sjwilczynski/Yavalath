@@ -321,7 +321,7 @@ app.get('/game:id', authorize, (req,res) =>{
     var id = req.params.id;
     console.log("request on game with parameters:",id, req.signedCookies.username)
     if( AllGameStates[id].areTwoPlayers ){
-        res.render('rooms', {AllGameStates : AllGameStates, username : req.signedCookies.username, message : "W tym pokoju nie ma miejsca"})
+        res.render('rooms', {AllGameStates : AllGameStates, username : req.signedCookies.username, message : "This room is full"})
     } else{
         res.render('hexagon', {id:id, username : req.signedCookies.username});
     }
@@ -333,14 +333,14 @@ app.get('/results', authorize, (req,res) =>{
         res.render('results', { history : data });
     })
     .catch( err => {
-        res.render('results', { message : "Coś poszło nie tak - spróbuj jeszcze raz" });
+        res.render('results', { message : "Something went wrong - try again" });
     });
     
 });
 
 app.get('/logout', authorize, (req,res) =>{
     res.cookie('username', '', {signed : true, maxAge : -1});
-    res.render('login',{message : 'Wylogowano'})
+    res.render('login',{ message : 'Logged out'})
 });
 
 

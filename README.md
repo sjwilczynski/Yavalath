@@ -1,4 +1,5 @@
-# Yavalath 
+# Yavalath
+
 One of the coolest project on my studies - game Yavalath in javascipt made for the **Selected Areas of Practical Software Development** lecture.
 
 You can check it out [here](http://mysterious-woodland-15958.herokuapp.com/ "Link to the game").
